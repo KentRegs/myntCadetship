@@ -5,7 +5,7 @@ import java.sql.Date;
 public class Promo {
 	private String promoCode;
 	private String details;
-	private String shortCode;
+	private int shortCode;
 	private Date startDate;
 	private Date endDate;
 	
@@ -23,10 +23,10 @@ public class Promo {
 		this.details = details;
 	}
 	
-	public String getShortCode() {
+	public int getShortCode() {
 		return shortCode;
 	}
-	public void setShortCode(String shortCode) {
+	public void setShortCode(int shortCode) {
 		this.shortCode = shortCode;
 	}
 	
