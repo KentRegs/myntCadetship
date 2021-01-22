@@ -1,13 +1,14 @@
 package javaLabs2;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Promo {
 	private String promoCode;
 	private String details;
-	private int shortCode;
-	private Date startDate;
-	private Date endDate;
+	private String shortCode;
+	private Timestamp startDate;
+	private Timestamp endDate;
 	
 	public String getPromoCode() {
 		return promoCode;
@@ -23,24 +24,24 @@ public class Promo {
 		this.details = details;
 	}
 	
-	public int getShortCode() {
+	public String getShortCode() {
 		return shortCode;
 	}
-	public void setShortCode(int shortCode) {
-		this.shortCode = shortCode;
+	public void setShortCode(String string) {
+		this.shortCode = string;
 	}
 	
-	public Date getStartDate() {
+	public Timestamp getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public void setStartDate(Timestamp start) {
+		this.startDate = start;
 	}
 	
-	public Date getEndDate() {
+	public Timestamp getEndDate() {
 		return endDate;
 	}
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setEndDate(Timestamp end) {
+		this.endDate = end;
 	}
 }
