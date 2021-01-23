@@ -1,6 +1,5 @@
 package javaLabs2;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Promo {
@@ -27,8 +26,8 @@ public class Promo {
 	public String getShortCode() {
 		return shortCode;
 	}
-	public void setShortCode(String string) {
-		this.shortCode = string;
+	public void setShortCode(String shortCodes) {
+		this.shortCode = shortCodes;
 	}
 	
 	public Timestamp getStartDate() {
