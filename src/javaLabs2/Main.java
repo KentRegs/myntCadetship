@@ -1,6 +1,7 @@
 package javaLabs2;
 
 import java.util.Map;
+import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.HashMap;
@@ -8,6 +9,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 
 // accepts a map w exactly 3 items
 public class Main {
@@ -20,7 +24,7 @@ public class Main {
 			   			   "PISO FRIES", "PISO ICECREAM"};	
 	static String details[] = {"Get a 12 inch pizza for only 1 peso!", 
 						"Get a vanilla dream cake for only 1 peso!", 
-						"Get an Oriecchiette for only 1 peso!", 
+						"Get a bowl of oriecchiette for only 1 peso!", 
 						"Get a bucket of fries for only 1 peso!", 
 						"Get a tub of vanilla ice cream for only 1 peso!"};
 	static String shortCodes[] = {"1234", "5678", "4321", "8765", "9009"};
@@ -119,19 +123,37 @@ public class Main {
 	}		
 	
 	// function for generating end dates
-	public static Timestamp genDate(int num) {		
-		Timestamp end = Timestamp.valueOf("2021-03-30 09:00:00");
+	public static Timestamp genDate(int num) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		java.util.Date utilDate = new java.util.Date();
+		Timestamp endDate = new Timestamp(utilDate.getTime());
+	    Date parsedDate;
+	    
+		try {
+			parsedDate = dateFormat.parse("2021-06-30 23:59:00");			
+			
+			if(num == 1)
+				parsedDate = dateFormat.parse("2021-04-30 23:59:00");				
+			else if(num == 2)
+				parsedDate = dateFormat.parse("2021-05-30 23:59:00");
+			else if(num == 3)
+				parsedDate = dateFormat.parse("2021-03-30 23:59:00");
+			else if(num == 4)
+				parsedDate = dateFormat.parse("2021-07-30 23:59:00");
+			
+			Timestamp end = new java.sql.Timestamp(parsedDate.getTime());
+			endDate = end;
+		} 
 		
-		if(num == 1)
-			end = Timestamp.valueOf("2021-04-30 09:00:00");
-		else if(num == 2)
-			end = Timestamp.valueOf("2021-05-30 09:00:00");
-		else if(num == 3)
-			end = Timestamp.valueOf("2021-06-30 09:00:00");
-		else if(num == 4)
-			end = Timestamp.valueOf("2021-07-30 09:00:00");
+		catch (ParseException e) {
+			e.printStackTrace();
+		}	    
 		
-		return end;
+		finally {
+			//
+		}
+		
+		return endDate;
 	}
 	
 	// function for generating promos

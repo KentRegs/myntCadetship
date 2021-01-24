@@ -26,7 +26,7 @@ public class DatabaseConnect {
     public static void connect() {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sms_db?useTimezone=true&serverTimezone=UTC","root","p4ssw0rd*");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sms_db","root","p4ssw0rd*");
             logger.info("Connected");
         }
         catch(Exception e){
@@ -64,7 +64,7 @@ public class DatabaseConnect {
 	            
 	            ps.execute();
 	            logger.log(Level.INFO, "\n" + 
-        					   		   "Inserted : {0}\n", entry.getPromoCode());
+        					   		   "Inserted : {0}\n", entry.getEndDate());
 	        }
 	    }
 	    
@@ -141,7 +141,11 @@ public class DatabaseConnect {
 
             while(resultSet.next()){
 //                logger.log(Level.INFO, resultSet.getString(1) + " : " + resultSet.getString(2));
-                result.add(resultSet.getString(1) + " : " + resultSet.getString(2));
+                result.add(resultSet.getString(1) 
+                		+ " : " + resultSet.getString(2)
+                		+ "\n     " + resultSet.getString(3)
+                		+ "\n     " + resultSet.getString(4)
+                		+ "\n     " + resultSet.getString(5) + "\n\n");
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "SQLException", e);
