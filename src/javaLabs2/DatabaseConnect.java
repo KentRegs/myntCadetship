@@ -23,9 +23,10 @@ public class DatabaseConnect {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/sms?useTimezone=true&serverTimezone=UTC","root","pw*");
+                    "jdbc:mysql://localhost:3306/sms?useTimezone=true&serverTimezone=UTC","root","pw");
             logger.info("Connected");
-        }catch(Exception e){
+        }
+        catch(Exception e){
             logger.log(Level.SEVERE, "Not Connected", e);
         }
     }
@@ -46,7 +47,8 @@ public class DatabaseConnect {
         			 + "(promoCode, "
         			 + "details, "
         			 + "shortCode, "
-        			 + "startDate) VALUES (?,?,?,?)";
+        			 + "startDate"
+        			 + "endDate) VALUES (?,?,?,?,?)";
         
 	    try(PreparedStatement ps = con.prepareStatement(query)) {
 	        for(Promo entry : promos) {
