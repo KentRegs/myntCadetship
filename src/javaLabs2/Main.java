@@ -53,7 +53,7 @@ public class Main {
 		
 		if(checker == "SUCCESS") {
 			DatabaseConnect.connect();			
-			DatabaseConnect.insertPromo("PROMO");
+//			DatabaseConnect.insertPromo("PROMO");
 		}			
 		else logger.log(Level.INFO, "\n\nINVALID SMS");
 	}
@@ -135,7 +135,7 @@ public class Main {
 	}
 	
 	// function for generating promos
-	public static void createPromo(){							
+	public static ArrayList<Promo> createPromo(){							
 		
 		Timestamp start = Timestamp.valueOf("2021-02-01 10:00:00");
 		
@@ -153,7 +153,8 @@ public class Main {
 			promo.setEndDate(genDate(ctr));
 			
 			promos.add(promo);
-		}		
+		}
+		return promos;		
 	}
 	
 	public static void showPromos() {
