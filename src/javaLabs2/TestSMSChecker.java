@@ -1,9 +1,11 @@
 package javaLabs2;
 
 import java.util.Map;
-import java.util.HashMap;
+
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestSMSChecker {
 	Map<Integer, String> smsChkMap = new HashMap<Integer, String>();	

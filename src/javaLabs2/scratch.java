@@ -20,7 +20,7 @@ public class scratch {
 //			logger.log(Level.INFO, "\ndate1 = " + sample + "\ndat2 = " + sample2);		
 //        logger.info("Kent Regalado : " + "Kent Regalado".hashCode() );
 		Map<Integer, String> smsMap = new HashMap<Integer, String>();	
-		smsMap = Main.genSMS();
+//		smsMap = Main.genSMS();
 		
 		String promoCodes[] = {"PISO PIZZA", "PISO CAKE", "PISO PASTA", 
 	   			   "PISO FRIES", "PISO ICECREAM"};

@@ -120,16 +120,16 @@ public class Main {
 	
 	// function for generating end dates
 	public static Timestamp genDate(int num) {		
-		Timestamp end = Timestamp.valueOf("2021-03-30 10:00:00");
+		Timestamp end = Timestamp.valueOf("2021-03-30 09:00:00");
 		
 		if(num == 1)
-			end = Timestamp.valueOf("2021-04-30 10:00:00");
+			end = Timestamp.valueOf("2021-04-30 09:00:00");
 		else if(num == 2)
-			end = Timestamp.valueOf("2021-05-30 10:00:00");
+			end = Timestamp.valueOf("2021-05-30 09:00:00");
 		else if(num == 3)
-			end = Timestamp.valueOf("2021-06-30 10:00:00");
+			end = Timestamp.valueOf("2021-06-30 09:00:00");
 		else if(num == 4)
-			end = Timestamp.valueOf("2021-07-30 10:00:00");
+			end = Timestamp.valueOf("2021-07-30 09:00:00");
 		
 		return end;
 	}
