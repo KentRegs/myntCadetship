@@ -76,12 +76,11 @@ public class Main {
 	public static ArrayList<Sms> genSMS() {
 		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
 		long end = Timestamp.valueOf("2021-06-30 23:59:00").getTime();
-		long diff = end - offset +1;
-		Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
-		int random = (int) ((Math.random() * (2 - 0)) + 0);
+		long diff = end - offset +1;			
 		
 		// PISO PIZZA SMS data population
-		for(int ctr = 0; ctr < 29; ctr++) {
+		for(int ctr = 0; ctr < 30; ctr++) {
+			Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
 			Sms sms = new Sms();				
 			
 			sms.setMsisdn(genMSISDN());
@@ -94,19 +93,21 @@ public class Main {
 			smsList.add(sms);
 		}
 		
-		// SMS data population
-		for(int ctr = 0; ctr < 29; ctr++) {
-			Sms sms = new Sms();				
-			
-			sms.setMsisdn(genMSISDN());
-			sms.setRecipient("PISO Inc.");
-			sms.setSender(genMSISDN());
-			sms.setMessage(promoCodes[random]);
-			sms.setShortCode(shortCodes[random]);
-			sms.setTimestamp(randTimeStamp);
-			
-			smsList.add(sms);
-		}
+//		// SMS data population
+//		for(int ctr = 0; ctr < 29; ctr++) {
+//			Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
+//			int random = (int) ((Math.random() * (2 - 0)) + 0);
+//			Sms sms = new Sms();				
+//			
+//			sms.setMsisdn(genMSISDN());
+//			sms.setRecipient("PISO Inc.");
+//			sms.setSender(genMSISDN());
+//			sms.setMessage(promoCodes[random]);
+//			sms.setShortCode(shortCodes[random]);
+//			sms.setTimestamp(randTimeStamp);
+//			
+//			smsList.add(sms);
+//		}
 		
 		return smsList;
 	}
