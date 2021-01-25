@@ -32,22 +32,27 @@ public class scratch {
 //		
 //		if(contains)
 //			logger.log(Level.INFO, "\nSUCCESS");
-//		else logger.log(Level.INFO, "\nFAILED");
-		java.util.Date utilDate = new java.util.Date();
-		Timestamp endDate = new Timestamp(utilDate.getTime());
-		logger.log(Level.INFO, "timestamp1 = " + endDate);
+////		else logger.log(Level.INFO, "\nFAILED");
+//		java.util.Date utilDate = new java.util.Date();
+//		Timestamp endDate = new Timestamp(utilDate.getTime());
+//		logger.log(Level.INFO, "timestamp1 = " + endDate);
+//		
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");		
+//	   
+//		try {
+//			Date parsedDate = dateFormat.parse("2021-03-30 10:00:00");
+//			Timestamp end = new java.sql.Timestamp(parsedDate.getTime());
+//			endDate = end;
+//			logger.log(Level.INFO, "timestamp2 = " + endDate);
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			//
+//		}
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");		
-	   
-		try {
-			Date parsedDate = dateFormat.parse("2021-03-30 10:00:00");
-			Timestamp end = new java.sql.Timestamp(parsedDate.getTime());
-			endDate = end;
-			logger.log(Level.INFO, "timestamp2 = " + endDate);
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			//
+		for(int ctr = 0; ctr < 10; ctr++) {
+			int random = (int) ((Math.random() * (3 - 0)) + 0);
+			System.out.println(random);
 		}
     }
 }
