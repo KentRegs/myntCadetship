@@ -16,9 +16,9 @@ public class DatabaseConnect {
 //    	smsList.addAll(Main.createSMS());
     	
         DatabaseConnect.connect();
-        DatabaseConnect.insertPromo(promoList);
-//        DatabaseConnect.insertSMS(smsList);
-        DatabaseConnect.retrievePromos();
+//        DatabaseConnect.insertPromo(promoList);
+        DatabaseConnect.insertSMS(smsList);
+//        DatabaseConnect.retrievePromos();
 //        DatabaseConnect.retrieveSMS();
         DatabaseConnect.disconnect();
     }
