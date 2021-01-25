@@ -26,7 +26,9 @@ public class DatabaseConnect {
     public static void connect() {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sms_db","root","p4ssw0rd*");
+            
+            // enables timezones and sets it to Universal Time (UTC)
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sms_dbuseTimezone=true&serverTimezone=UTC","root","p4ssw0rd*");
             logger.info("Connected");
         }
         catch(Exception e){
