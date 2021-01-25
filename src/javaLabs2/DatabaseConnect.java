@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class DatabaseConnect {
     final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());    
     static ArrayList<Promo> promoList = new ArrayList<>();
-    static ArrayList<SMS> smsList = new ArrayList<>();
+    static ArrayList<Sms> smsList = new ArrayList<>();
     private static Connection con = null;
 
     public static void main(String[] args){
@@ -87,7 +87,7 @@ public class DatabaseConnect {
         }	    	    
     }
     
-    public static void insertSMS(ArrayList<SMS> smsList){
+    public static void insertSMS(ArrayList<Sms> smsList){
         String query = "INSERT INTO sms "
 					 + "(msisdn, "
 					 + "recipient, "
@@ -98,7 +98,7 @@ public class DatabaseConnect {
 					 + "timeStamp) VALUES (?,?,?,?,?,?,?)";
 
 		try {
-		for(SMS entry : smsList) {
+		for(Sms entry : smsList) {
 			PreparedStatement ps = con.prepareStatement(query);
 			   ps.setString(1, entry.getMsisdn());
 			   ps.setString(2, entry.getRecipient());

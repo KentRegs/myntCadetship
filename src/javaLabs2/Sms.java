@@ -2,7 +2,7 @@ package javaLabs2;
 
 import java.sql.Timestamp;
 
-public class SMS {
+public class Sms {
 	private String msisdn;
 	private String recipient;
 	private String sender;

@@ -11,13 +11,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 
 // accepts a map w exactly 3 items
 public class Main {
 	final private static Logger logger = Logger.getLogger(TestSMSChecker.class.getName());
+	static Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());
+	static Map<Integer, String> smsMap = new HashMap<Integer, String>();
 	private static ArrayList<Promo> promos = new ArrayList<>();
-	Timestamp dateAndTime = new Timestamp(System.currentTimeMillis());
+	private static ArrayList<Sms> smsList = new ArrayList<>();
 	static Scanner sc = new Scanner(System.in);
 	
 	static String promoCodes[] = {"PISO PIZZA", "PISO CAKE", "PISO PASTA", 
@@ -64,13 +65,48 @@ public class Main {
 	
 	// function for generating an SMS
 	public static Map<Integer, String> genSMS(String msisdn, String promoCode, String shortCode) {
-		Map<Integer, String> smsMap = new HashMap<Integer, String>();			
-		
 		smsMap.put(1, msisdn);    
 		smsMap.put(2, promoCode);
 		smsMap.put(3, shortCode);	
 		
 		return smsMap;
+	}
+	
+	// function for generating an SMS
+	public static void genSMS() {
+		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
+		long end = Timestamp.valueOf("2021-06-30 23:59:00").getTime();
+		long diff = end - offset +1;
+		Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
+		int random = (int) ((Math.random() * (2 - 0)) + 0);
+		
+		// PISO PIZZA SMS data population
+		for(int ctr = 0; ctr < 29; ctr++) {
+			Sms sms = new Sms();				
+			
+			sms.setMsisdn(genMSISDN());
+			sms.setRecipient("PISO Inc.");
+			sms.setSender(genMSISDN());
+			sms.setMessage("PISO PIZZA");
+			sms.setShortCode("1234");
+			sms.setTimestamp(randTimeStamp);
+			
+			smsList.add(sms);
+		}
+		
+		// SMS data population
+		for(int ctr = 0; ctr < 29; ctr++) {
+			Sms sms = new Sms();				
+			
+			sms.setMsisdn(genMSISDN());
+			sms.setRecipient("PISO Inc.");
+			sms.setSender(genMSISDN());
+			sms.setMessage(promoCodes[random]);
+			sms.setShortCode(shortCodes[random]);
+			sms.setTimestamp(randTimeStamp);
+			
+			smsList.add(sms);
+		}
 	}
 	
 	// function for checking an SMS
@@ -85,20 +121,21 @@ public class Main {
 		ArrayList<Integer> index2 = new ArrayList<>();				
 		
 		// checks if the msisdn is valid
-		if(genSMS(smsChkMap.get(1), smsChkMap.get(2), smsChkMap.get(3)).get(1).matches("[0-9]+") 
-		&& genSMS(smsChkMap.get(1), smsChkMap.get(2), smsChkMap.get(3)).get(1).length() == 9) 
+		if(genSMS(smsChkMap.get(1), smsChkMap.get(2), smsChkMap.get(3)).get(1) != null
+			&& genSMS(smsChkMap.get(1), smsChkMap.get(2), smsChkMap.get(3)).get(1).matches("[0-9]+") 
+			&& genSMS(smsChkMap.get(1), smsChkMap.get(2), smsChkMap.get(3)).get(1).length() == 9) 
 			chk1 = 1;		
 		
 		// checks if the entered promo code is valid
 		for(i = 0; i < promoCodes.length; i++) {
-			if(smsChkMap.get(2).equals(promoCodes[i])) {
+			if(smsChkMap.get(2) != null && smsChkMap.get(2).equals(promoCodes[i])) {
 				index1.add(i);
 			}
 		}		
 
 		// checks if the entered shortcode is valid
 		for(j = 0; j < shortCodes.length; j++) {
-			if(smsChkMap.get(3).equals(shortCodes[j]))
+			if(smsChkMap.get(3) != null && smsChkMap.get(3).equals(shortCodes[j]))
 				index2.add(j);
 		}
 				
@@ -143,13 +180,9 @@ public class Main {
 			
 			Timestamp end = new java.sql.Timestamp(parsedDate.getTime());
 			endDate = end;
-		} 
-		
-		catch (ParseException e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
-		}	    
-		
-		finally {
+		} finally {
 			//
 		}
 		
@@ -161,7 +194,7 @@ public class Main {
 		
 		Timestamp start = Timestamp.valueOf("2021-02-01 10:00:00");
 		
-		for(int ctr = 0; ctr < 5; ctr++) {
+		for(int ctr = 0; ctr < 3; ctr++) {
 			Promo promo = new Promo();				
 			
 			// nextInt is normally exclusive of the top value,
