@@ -13,7 +13,7 @@ public class DatabaseConnect {
 
     public static void main(String[] args){
     	promoList.addAll(Main.createPromo());
-//    	smsList.addAll(Main.createSMS());
+    	smsList.addAll(Main.genSMS());
     	
         DatabaseConnect.connect();
 //        DatabaseConnect.insertPromo(promoList);
@@ -28,7 +28,7 @@ public class DatabaseConnect {
             Class.forName("com.mysql.cj.jdbc.Driver");
             
             // enables timezones and sets it to Universal Time (UTC)
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sms_dbuseTimezone=true&serverTimezone=UTC","root","p4ssw0rd*");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sms_db?useTimezone=true&serverTimezone=UTC","root","p4ssw0rd*");
             logger.info("Connected");
         }
         catch(Exception e){

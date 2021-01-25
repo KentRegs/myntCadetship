@@ -73,7 +73,7 @@ public class Main {
 	}
 	
 	// function for generating an SMS
-	public static void genSMS() {
+	public static ArrayList<Sms> genSMS() {
 		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
 		long end = Timestamp.valueOf("2021-06-30 23:59:00").getTime();
 		long diff = end - offset +1;
@@ -107,6 +107,8 @@ public class Main {
 			
 			smsList.add(sms);
 		}
+		
+		return smsList;
 	}
 	
 	// function for checking an SMS
