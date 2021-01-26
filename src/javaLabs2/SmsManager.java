@@ -37,7 +37,7 @@ public class SmsManager implements ManageSms {
 			    ps.setInt(6, entry.getTransactionId());
 			    ps.setTimestamp(7, entry.getTimestamp());
 			   
-			    ps.executeQuery();
+			    ps.execute();
 			    
 			    logger.log(Level.INFO, "\n" + 
 		   					   		   "Inserted : {0}\n", entry.getMsisdn());			    
