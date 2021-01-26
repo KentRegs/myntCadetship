@@ -156,9 +156,36 @@ public class SmsManager implements ManageSms {
 	}
 
 	@Override
-	public void acquireSms(Connection con, String... msisdn) {
-		// TODO Auto-generated method stub
-		
+	public void acquireSms(Connection con, String... msisdn) {		
+		for(String curr : msisdn) {
+			String selectQuery = "SELECT * FROM sms_db.sms	\r\n"
+							   + "WHERE msisdn = ?";		
+	
+			ResultSet resultSet = null;
+			ArrayList<String> result = new ArrayList<>();
+			
+			try {
+				PreparedStatement ps = con.prepareStatement(selectQuery);
+				ps.setString(1, curr);
+				
+				resultSet = ps.executeQuery();
+			
+			 while(resultSet.next()){
+			 	result.add("\nidSMS: " + resultSet.getInt(1) 
+			     		+ "\nmsisdn: " + resultSet.getString(2)
+			     		+ "\nrecipient: " + resultSet.getString(3)
+			     		+ "\nsender: " + resultSet.getString(4)
+			     		+ "\nmessage: " + resultSet.getString(5)
+			     		+ "\nshortcode: " + resultSet.getString(6)
+			     		+ "\ntransaction id: " + resultSet.getInt(7)
+			     		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
+			 }
+			} catch (SQLException e) {
+			 logger.log(Level.SEVERE, "SQLException", e);
+			}
+			
+			logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);
+		}
 	}
 	
 }

@@ -24,7 +24,8 @@ public class DatabaseConnect {
         smsMngr.insertSms(smsList, con);
 //        smsMngr.acquireSms(start, end, con);
 //        smsMngr.acquireSms("PISO CAKE", con);
-        smsMngr.acquireSms(con);
+//        smsMngr.acquireSms(con);
+        smsMngr.acquireSms(con, "", "", "");
 //        DatabaseConnect.retrievePromos();
 //        DatabaseConnect.retrieveSMS();
         DatabaseConnect.disconnect();
