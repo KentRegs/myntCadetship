@@ -13,10 +13,9 @@ import java.sql.ResultSet;
 public class SmsManager implements ManageSms {
 	final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());
 	static ArrayList<Sms> smsList = new ArrayList<>();
-	private static Connection con = null;
 	
 	@Override
-	public void insertSms(ArrayList<Sms> smsList) {
+	public void insertSms(ArrayList<Sms> smsList, Connection con) {
 		String query = "INSERT INTO sms "
 					 + "(msisdn, "
 					 + "recipient, "
@@ -41,6 +40,9 @@ public class SmsManager implements ManageSms {
 				   logger.log(Level.INFO, "\n" + 
 			   					   		  "Inserted : {0}\n", entry.getMsisdn());
 			}
+			
+			logger.log(Level.INFO, "\n\n>> DONE INSERTING SMS! <<\n\n");
+			
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "SQLException", e);
 		} finally {
@@ -51,8 +53,7 @@ public class SmsManager implements ManageSms {
 //			   }
 //			} catch (Exception e){
 //				logger.log(Level.SEVERE, "ERROR IN CLOSING", e);
-//			}	
-			logger.log(Level.INFO, "\n\n>> DONE INSERTING SMS! <<\n\n");
+//			}				
 		}	 
 	}
 
