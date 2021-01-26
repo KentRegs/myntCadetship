@@ -58,7 +58,7 @@ public class SmsManager implements ManageSms {
 	}
 
 	@Override
-	public void acquireSms(Timestamp start, Timestamp end) {
+	public void acquireSms(Timestamp start, Timestamp end, Connection con) {
 		String selectQuery = "select * from sms_db.sms	\r\n"
 						   + "WHERE timeStamp BETWEEN ? AND ?";		
 		
