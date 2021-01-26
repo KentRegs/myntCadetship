@@ -25,9 +25,6 @@ public class SmsManager implements ManageSms {
 					 + "transactionId, "
 					 + "timeStamp) VALUES (?,?,?,?,?,?,?)";
 
-		ResultSet resultSet = null;
-        ArrayList<String> result = new ArrayList<>();
-		
 		try {
 			for(Sms entry : smsList) {
 				PreparedStatement ps = con.prepareStatement(query);
@@ -40,27 +37,17 @@ public class SmsManager implements ManageSms {
 			    ps.setInt(6, entry.getTransactionId());
 			    ps.setTimestamp(7, entry.getTimestamp());
 			   
-			    resultSet = ps.executeQuery();
-			    logger.log(Level.INFO, "\n" + 
-		   					   		   "Inserted : {0}\n", entry.getMsisdn());
+			    ps.executeQuery();
 			    
-			    while(resultSet.next()){
-	            	result.add("\nidSMS: " + resultSet.getInt(1) 
-	                		+ "\nmsisdn: " + resultSet.getString(2)
-	                		+ "\nrecipient: " + resultSet.getString(3)
-	                		+ "\nsender: " + resultSet.getString(4)
-	                		+ "\nmessage: " + resultSet.getString(5)
-	                		+ "\nshortcode: " + resultSet.getString(6)
-	                		+ "\ntransaction id: " + resultSet.getInt(7)
-	                		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
-	            }
+			    logger.log(Level.INFO, "\n" + 
+		   					   		   "Inserted : {0}\n", entry.getMsisdn());			    
 			}
 			
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "SQLException", e);
 		} 
 		
-		logger.log(Level.INFO, "\nInserted SMS:\n{0}\n", result);
+//		logger.log(Level.INFO, "\nInserted SMS:\n{0}\n", result);
 	}
 
 	@Override
