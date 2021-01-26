@@ -31,44 +31,36 @@ public class SmsManager implements ManageSms {
 		try {
 			for(Sms entry : smsList) {
 				PreparedStatement ps = con.prepareStatement(query);
-					
-					while(resultSet.next()){
-		            	result.add("\nidSMS: " + resultSet.getInt(1) 
-		                		+ "\nmsisdn: " + resultSet.getString(2)
-		                		+ "\nrecipient: " + resultSet.getString(3)
-		                		+ "\nsender: " + resultSet.getString(4)
-		                		+ "\nmessage: " + resultSet.getString(5)
-		                		+ "\nshortcode: " + resultSet.getString(6)
-		                		+ "\ntransaction id: " + resultSet.getInt(7)
-		                		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
-		            }
-					ps.setString(1, entry.getMsisdn());
-				    ps.setString(2, entry.getRecipient());
-				    ps.setString(3, entry.getSender());
-				    ps.setString(4, entry.getMessage());
-				    ps.setString(5, entry.getShortCode());
-				    ps.setInt(6, entry.getTransactionId());
-				    ps.setTimestamp(7, entry.getTimestamp());
-				   
-				    ps.execute();
-				    logger.log(Level.INFO, "\n" + 
-			   					   		   "Inserted : {0}\n", entry.getMsisdn());
+				
+				ps.setString(1, entry.getMsisdn());
+			    ps.setString(2, entry.getRecipient());
+			    ps.setString(3, entry.getSender());
+			    ps.setString(4, entry.getMessage());
+			    ps.setString(5, entry.getShortCode());
+			    ps.setInt(6, entry.getTransactionId());
+			    ps.setTimestamp(7, entry.getTimestamp());
+			   
+			    resultSet = ps.executeQuery();
+			    logger.log(Level.INFO, "\n" + 
+		   					   		   "Inserted : {0}\n", entry.getMsisdn());
+			    
+			    while(resultSet.next()){
+	            	result.add("\nidSMS: " + resultSet.getInt(1) 
+	                		+ "\nmsisdn: " + resultSet.getString(2)
+	                		+ "\nrecipient: " + resultSet.getString(3)
+	                		+ "\nsender: " + resultSet.getString(4)
+	                		+ "\nmessage: " + resultSet.getString(5)
+	                		+ "\nshortcode: " + resultSet.getString(6)
+	                		+ "\ntransaction id: " + resultSet.getInt(7)
+	                		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
+	            }
 			}
-			
-			logger.log(Level.INFO, "\n\n>> DONE INSERTING SMS! <<\n\n");
 			
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "SQLException", e);
-		} finally {
-//			try {
-//			   if (con != null) {
-//				   logger.info("\nDONE INSERTING SMS! \n");
-//				   con.close();
-//			   }
-//			} catch (Exception e){
-//				logger.log(Level.SEVERE, "ERROR IN CLOSING", e);
-//			}				
-		}	 
+		} 
+		
+		logger.log(Level.INFO, "\nInserted SMS:\n{0}\n", result);
 	}
 
 	@Override
