@@ -10,6 +10,7 @@ public class DatabaseConnect {
     static ArrayList<Promo> promoList = new ArrayList<>();
     static ArrayList<Sms> smsList = new ArrayList<>();
     private static Connection con = null;
+    static SmsManager smsMngr = new SmsManager();
 
     public static void main(String[] args){
     	promoList.addAll(Main.createPromo());
@@ -17,7 +18,7 @@ public class DatabaseConnect {
     	
         DatabaseConnect.connect();
 //        DatabaseConnect.insertPromo(promoList);
-        DatabaseConnect.insertSMS(smsList);
+        smsMngr.insertSms(smsList);
 //        DatabaseConnect.retrievePromos();
 //        DatabaseConnect.retrieveSMS();
         DatabaseConnect.disconnect();
@@ -85,51 +86,7 @@ public class DatabaseConnect {
 //            }
 	    	logger.info("\nDONE INSERTING PROMOS! \n");
         }	    	    
-    }
-    
-    public static void insertSMS(ArrayList<Sms> smsList){
-        String query = "INSERT INTO sms "
-					 + "(msisdn, "
-					 + "recipient, "
-					 + "sender, "
-					 + "message, "
-					 + "shortCode, "
-					 + "transactionId, "
-					 + "timeStamp) VALUES (?,?,?,?,?,?,?)";
-
-		try {
-		for(Sms entry : smsList) {
-			PreparedStatement ps = con.prepareStatement(query);
-			   ps.setString(1, entry.getMsisdn());
-			   ps.setString(2, entry.getRecipient());
-			   ps.setString(3, entry.getSender());
-			   ps.setString(4, entry.getMessage());
-			   ps.setString(5, entry.getShortCode());
-			   ps.setInt(6, entry.getTransactionId());
-			   ps.setTimestamp(7, entry.getTimestamp());
-			   
-			   ps.execute();
-			   logger.log(Level.INFO, "\n" + 
-		   					   		  "Inserted : {0}\n", entry.getMsisdn());
-		}
-		}
-		
-		catch (SQLException e) {
-		logger.log(Level.SEVERE, "SQLException", e);
-		}
-		
-		finally {
-		//try {
-		//   if (con != null) {
-		//   	con.close();
-		//   }
-		//}
-		//catch (Exception e){
-		//   logger.log(Level.SEVERE, "ERROR IN CLOSING", e);
-		//}
-		logger.info("\nDONE INSERTING SMS! \n");
-		}	 
-    }
+    }       
 
     public static ArrayList<String> retrievePromos(){
         String selectQuery = "SELECT * FROM promos";
