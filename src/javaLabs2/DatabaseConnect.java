@@ -9,8 +9,8 @@ public class DatabaseConnect {
     final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());    
     static ArrayList<Promo> promoList = new ArrayList<>();
     static ArrayList<Sms> smsList = new ArrayList<>();
-    private static Connection con = null;
     static SmsManager smsMngr = new SmsManager();
+    private static Connection con = null;
 
     public static void main(String[] args){
     	promoList.addAll(Main.createPromo());
@@ -18,7 +18,7 @@ public class DatabaseConnect {
     	
         DatabaseConnect.connect();
 //        DatabaseConnect.insertPromo(promoList);
-        smsMngr.insertSms(smsList);
+        smsMngr.insertSms(smsList, con);
 //        DatabaseConnect.retrievePromos();
 //        DatabaseConnect.retrieveSMS();
         DatabaseConnect.disconnect();
