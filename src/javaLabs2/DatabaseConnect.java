@@ -6,11 +6,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DatabaseConnect {
-    final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());    
+    final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());
+    static Timestamp start = Timestamp.valueOf("2021-02-01 10:00:00");
+    static Timestamp end = Timestamp.valueOf("2021-03-30 23:59:00");
     static ArrayList<Promo> promoList = new ArrayList<>();
     static ArrayList<Sms> smsList = new ArrayList<>();
     private static Connection con = null;
     static SmsManager smsMngr = new SmsManager();
+    
 
     public static void main(String[] args){
     	promoList.addAll(Main.createPromo());
@@ -19,6 +22,7 @@ public class DatabaseConnect {
         DatabaseConnect.connect();
 //        DatabaseConnect.insertPromo(promoList);
         smsMngr.insertSms(smsList);
+        smsMngr.acquireSms(start, end);
 //        DatabaseConnect.retrievePromos();
 //        DatabaseConnect.retrieveSMS();
         DatabaseConnect.disconnect();

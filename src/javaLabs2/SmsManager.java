@@ -3,9 +3,12 @@ package javaLabs2;
 import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class SmsManager implements ManageSms {
 	final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());
@@ -54,7 +57,59 @@ public class SmsManager implements ManageSms {
 	}
 
 	@Override
-	public void acquireSms() {
+	public void acquireSms(Timestamp start, Timestamp end) {
+		String selectQuery = "select * from sms_db.sms	\r\n"
+						   + "WHERE timeStamp BETWEEN ? AND ?";		
+		
+        ResultSet resultSet = null;
+        ArrayList<String> result = new ArrayList<>();
+
+        try {
+        	PreparedStatement ps = con.prepareStatement(selectQuery);
+    		ps.setTimestamp(1, start);
+    		ps.setTimestamp(2, end);
+    		
+    		resultSet = ps.executeQuery();
+//            statement = con.createStatement();
+//            resultSet = statement.executeQuery(selectQuery);
+
+            while(resultSet.next()){
+            	result.add(resultSet.getString(1) 
+                		+ " : " + resultSet.getString(2)
+                		+ "\n     " + resultSet.getString(3)
+                		+ "\n     " + resultSet.getString(4)
+                		+ "\n     " + resultSet.getString(5)
+                		+ "\n     " + resultSet.getString(6)
+                		+ "\n     " + resultSet.getString(7)
+                		+ "\n     " + resultSet.getString(8) + "\n\n");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "SQLException", e);
+        }
+
+        logger.log(Level.INFO, "\nRetrieved promos:\n{0}\n", result);        
+	}
+
+	@Override
+	public void acquireSms(String stringValue) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void acquireSms(ArrayList<Sms> smsList) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sentSms() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void acquireSms(String... msisdn) {
 		// TODO Auto-generated method stub
 		
 	}
