@@ -1,14 +1,13 @@
 package javaLabs2;
 
+import java.sql.Timestamp;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public class SmsManager implements ManageSms {
 	final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());
@@ -52,7 +51,7 @@ public class SmsManager implements ManageSms {
 
 	@Override
 	public void acquireSms(Timestamp start, Timestamp end, Connection con) {
-		String selectQuery = "select * from sms_db.sms	\r\n"
+		String selectQuery = "SELECT * FROM sms_db.sms	\r\n"
 						   + "WHERE timeStamp BETWEEN ? AND ?";		
 		
         ResultSet resultSet = null;
@@ -64,8 +63,6 @@ public class SmsManager implements ManageSms {
     		ps.setTimestamp(2, end);
     		
     		resultSet = ps.executeQuery();
-//            statement = con.createStatement();
-//            resultSet = statement.executeQuery(selectQuery);
 
             while(resultSet.next()){
             	result.add("\nidSMS: " + resultSet.getInt(1) 
@@ -81,17 +78,50 @@ public class SmsManager implements ManageSms {
             logger.log(Level.SEVERE, "SQLException", e);
         }
 
-        logger.log(Level.INFO, "\nRetrieved promos:\n{0}\n", result);        
+        logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);        
 	}
 
 	@Override
-	public void acquireSms(String stringValue) {
-		// TODO Auto-generated method stub
+	public void acquireSms(String stringValue, Connection con) {
+		String selectQuery = "";
 		
+		if(stringValue.contains("PISO")) {
+			selectQuery = "SELECT * FROM sms_db.sms	\r\n"
+		   		   	    + "WHERE message = ?";
+		}
+		else {
+			selectQuery = "SELECT * FROM sms_db.sms	\r\n"
+	   		   	    	+ "WHERE msisdn = ?";
+		}
+
+		ResultSet resultSet = null;
+		ArrayList<String> result = new ArrayList<>();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(selectQuery);
+			ps.setString(1, stringValue);
+			
+			resultSet = ps.executeQuery();
+		
+		 while(resultSet.next()){
+		 	result.add("\nidSMS: " + resultSet.getInt(1) 
+		     		+ "\nmsisdn: " + resultSet.getString(2)
+		     		+ "\nrecipient: " + resultSet.getString(3)
+		     		+ "\nsender: " + resultSet.getString(4)
+		     		+ "\nmessage: " + resultSet.getString(5)
+		     		+ "\nshortcode: " + resultSet.getString(6)
+		     		+ "\ntransaction id: " + resultSet.getInt(7)
+		     		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
+		 }
+		} catch (SQLException e) {
+		 logger.log(Level.SEVERE, "SQLException", e);
+		}
+		
+		logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);  
 	}
 
 	@Override
-	public void acquireSms(ArrayList<Sms> smsList) {
+	public void acquireSms(Connection con) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -103,7 +133,7 @@ public class SmsManager implements ManageSms {
 	}
 
 	@Override
-	public void acquireSms(String... msisdn) {
+	public void acquireSms(Connection con, String... msisdn) {
 		// TODO Auto-generated method stub
 		
 	}
