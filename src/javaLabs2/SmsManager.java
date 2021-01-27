@@ -1,5 +1,6 @@
 package javaLabs2;
 
+import java.util.Random;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.sql.PreparedStatement;
 
 public class SmsManager implements ManageSms {
 	final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());
-	static ArrayList<Sms> smsList = new ArrayList<>();
+	static ArrayList<Sms> smsList = new ArrayList<>();		
 	
 	@Override
 	public void insertSms(ArrayList<Sms> smsList, Connection con) {

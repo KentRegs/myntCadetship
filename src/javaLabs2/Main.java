@@ -85,7 +85,7 @@ public class Main {
 			
 			sms.setMsisdn(genMSISDN());
 			sms.setRecipient("PISO Inc.");
-			sms.setSender(genMSISDN());
+			sms.setSender(genName());
 			sms.setMessage("PISO PIZZA");
 			sms.setShortCode("1234");
 			sms.setTimestamp(randTimeStamp);
@@ -155,12 +155,34 @@ public class Main {
 		return value;
 	}
 	
+	public static void smsChecker() {
+//		smsMngr.
+	}
+	
 	// function for generating random 9-digit mobile numbers (msisdn)
 	public static String genMSISDN() {
 		long num = new Random().nextInt(999999999);
 
 		return String.format("%09d", num);
-	}		
+	}
+	
+	// function for generating random names
+	public static String genName() {
+		String[] firstName = { "Michael", "Michelle", "Donald", "Lakeith",
+						       "Hiro", "Brendan", "Morgan", "Robert", "Steven", "David", "Stephen", 
+						       "Harold", "William", "Matthew", "Max", 
+						       "Christina", "Yna", "Bea", "Mika", "Samantha", "Yara", "Kiara",
+						       "Isabelle", "Mila", "Miles"};
+		String[] lastName = { " Rourke", " Smith", " Johnson", " Williams",
+						      " Ong", " Davis", " Miller", " Adobo", " Wilson", " Peterson", " Ramirez", 
+						      " Murai", " Stanfield", " Bourdain", " Picasso", 
+						      " Ng", " Philips", " Riverson", " Abbott", " Moore", " Babbage", " Lee",
+						      " White", " Gonzales", " Lopez"};
+		Random randName = new Random();
+		
+		return firstName[randName.nextInt(firstName.length)] +
+			   lastName[randName.nextInt(lastName.length)];
+	}
 	
 	// function for generating end dates
 	public static Timestamp genDate(int num) {
