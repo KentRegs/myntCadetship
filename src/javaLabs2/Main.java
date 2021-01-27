@@ -117,7 +117,7 @@ public class Main {
 	}
 	
 	// function for generating an SMS
-	public static void genSMS() {
+	public static ArrayList<Sms> genSMS() {
 		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
 		long end = Timestamp.valueOf("2021-06-30 23:59:00").getTime();
 		long diff = end - offset +1;			
@@ -150,9 +150,11 @@ public class Main {
 			sms.setMessage(promoCodes[random]);
 			sms.setShortCode(shortCodes[random]);
 			sms.setTimestamp(randTimeStamp);
+			sms.setType("User");	
 			
 			smsList.add(sms);
 		}
+		return smsList;
 	}
 	
 	public static ArrayList<Sms> smsChecker(Connection con) {
@@ -160,11 +162,8 @@ public class Main {
 		ArrayList<String> checkerArrList = new ArrayList<>();
 		PromoManager promoMngr = new PromoManager();
 		
-		// checks if the msisdn is valid
-//		if(genSMS(smsChkMap.get(1), smsChkMap.get(2), smsChkMap.get(3)).get(1) != null
-//			&& genSMS(smsChkMap.get(1), smsChkMap.get(2), smsChkMap.get(3)).get(1).matches("[0-9]+") 
-//			&& genSMS(smsChkMap.get(1), smsChkMap.get(2), smsChkMap.get(3)).get(1).length() == 9) 
-//			chk1 = 1;
+		genSMS();
+		
 		for(Sms entry : smsList) {
 			int chk1 = 0;
 			int chk2 = 0;
@@ -188,7 +187,7 @@ public class Main {
 				chk3 = 1;
 			
 			// checks if the entered message (promo code) is valid
-			checkerArrList.addAll(promoMngr.retrievePromos(entry.getMessage(), con));
+			checkerArrList.addAll(promoMngr.retrievePromos(entry.getMessage(), con));				
 			
 			if(entry.getMessage() != null && !(checkerArrList.isEmpty())) {
 				

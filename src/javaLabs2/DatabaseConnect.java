@@ -16,14 +16,14 @@ public class DatabaseConnect {
     
 
     public static void main(String[] args){
-    	promoList.addAll(Main.createPromo());
-    	smsList.addAll(Main.smsChecker(con));
+    	promoList.addAll(Main.createPromo());    	
     	
         DatabaseConnect.connect();
-//        DatabaseConnect.insertPromo(promoList);
+        insertPromo(promoList);
+        smsList.addAll(Main.genSMS());        
         smsMngr.insertSms(smsList, con);
 //        smsMngr.acquireSms(start, end, con);
-//        smsMngr.acquireSms("PISO CAKE", con);
+        smsMngr.acquireSms("PISO CAKE", con);
 //        smsMngr.acquireSms(con);
 //        smsMngr.acquireSms(con, "", "", "");
 //        DatabaseConnect.retrievePromos();

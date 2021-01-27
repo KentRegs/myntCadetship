@@ -39,7 +39,7 @@ public class SmsManager implements ManageSms {
 			    ps.setInt(6, entry.getTransactionId());
 			    ps.setTimestamp(7, entry.getTimestamp());
 			    ps.setString(8, entry.getType());
-			    ps.setString(8, entry.getStatus());
+			    ps.setString(9, entry.getStatus());
 			   
 			    ps.execute();
 			    
@@ -122,7 +122,8 @@ public class SmsManager implements ManageSms {
 		 logger.log(Level.SEVERE, "SQLException", e);
 		}
 		
-		logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);  
+		logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);
+		logger.log(Level.INFO, "\n>> SAMPLE >>: (({0}))\n", result.get(8));
 	}
 
 	@Override
