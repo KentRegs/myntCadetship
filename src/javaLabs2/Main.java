@@ -146,7 +146,7 @@ public class Main {
 			
 			sms.setMsisdn(genMSISDN());
 			sms.setRecipient("PISO Inc.");
-			sms.setSender(genMSISDN());
+			sms.setSender(genName());
 			sms.setMessage(promoCodes[random]);
 			sms.setShortCode(shortCodes[random]);
 			sms.setTimestamp(randTimeStamp);
@@ -161,7 +161,11 @@ public class Main {
 		ArrayList<Sms> verifiedSmsList = new ArrayList<>();
 		ArrayList<Promo> checkerArrList = new ArrayList<>();
 		PromoManager promoMngr = new PromoManager();
+		Timestamp before = new Timestamp(0);
+		Timestamp after = new Timestamp(0);
+		int ctr = 0;
 		
+		// generate SMS ArrayList
 		genSMS();
 		
 		for(Sms entry : smsList) {
@@ -169,8 +173,7 @@ public class Main {
 			int chk2 = 0;
 			int chk3 = 0;
 			int chk4 = 0;
-			int chk5 = 0;
-			int ctr = 0;
+			int chk5 = 0;						
 			
 			Sms sms = new Sms();						
 			
@@ -184,44 +187,38 @@ public class Main {
 				chk2 = 1;
 			
 			// checks if the sender has a valid name
-			if(entry.getSender() != null && entry.getSender().matches("[a-zA-Z]+"))
+			if(entry.getSender() != null && entry.getSender().matches("[a-zA-z]+[ ][a-zA-Z]+")) 
 				chk3 = 1;
 			
-			// checks if the entered message (promo code) is valid
+//			// checks if the entered message (promo code) is valid
 			checkerArrList.addAll(promoMngr.retrievePromos(entry.getMessage(), con));				
-			
-			if(entry.getMessage() != null && !(checkerArrList.isEmpty())) {
-				
-				// checks if the entered shortcode is valid
-				if(entry.getShortCode() != null &&
-				   checkerArrList.indexOf(entry.getMessage()) 
-				   == checkerArrList.indexOf(entry.getShortCode())) {
-					chk4 = 1;
-				}
-			}
-			
+//			
+//			if(entry.getMessage() != null && !(checkerArrList.isEmpty())) {
+//				
+//				// checks if the entered shortcode is valid
+//				if(entry.getShortCode() != null &&
+//				   checkerArrList.indexOf(entry.getMessage()) 
+//				   == checkerArrList.indexOf(entry.getShortCode())) {
+//					chk4 = 1;
+//				}
+//			}
+		 
 			ArrayList<Integer> index1 = new ArrayList<>();
 			ArrayList<Integer> index2 = new ArrayList<>();
 			
-			
-			// checks if the entered promo code is valid
+			// checks if the entered message (promo code) is valid
 			for(Promo entry1 : checkerArrList) {
-				if(entry.getMessage() != null && entry.getMessage().matches(entry1.getPromoCode())) {
-					index1.add(checkerArrList.indexOf(entry1));
-				}
+				if(entry.getMessage() != null && entry.getMessage().matches(entry1.getPromoCode()))
+					index1.add(checkerArrList.indexOf(entry1));				
 				
-				if(entry.getShortCode() != null && entry.getMessage().matches(entry1.getShortCode())) {
-					index2.add(checkerArrList.indexOf(entry1));
-				}
+				if(entry.getShortCode() != null && entry.getShortCode().matches(entry1.getShortCode())) 
+					index2.add(checkerArrList.indexOf(entry1));				
 			}
 			
 			if(index1.equals(index2))
-				chk5 = 1;
+				chk4 = 1;
 					
-			// checks if timestamp is within promo period
-			Timestamp before = new Timestamp(0);
-			Timestamp after = new Timestamp(0);
-			
+			// checks if timestamp is within promo period						
 			before = checkerArrList.get(ctr).getStartDate();
 			after = checkerArrList.get(ctr).getEndDate();
 			
@@ -247,7 +244,7 @@ public class Main {
 			
 			ctr++;
 		}	
-			return verifiedSmsList;
+		return verifiedSmsList;
 	}				
 	
 	// function for generating random 9-digit mobile numbers (msisdn)

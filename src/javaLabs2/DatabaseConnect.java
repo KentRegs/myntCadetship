@@ -14,16 +14,15 @@ public class DatabaseConnect {
     static SmsManager smsMngr = new SmsManager();
     private static Connection con = null;
     
-
     public static void main(String[] args){
     	promoList.addAll(Main.createPromo());    	
     	
         DatabaseConnect.connect();
-        insertPromo(promoList);
-        smsList.addAll(Main.smsChecker(con));        
-        smsMngr.insertSms(smsList, con);
+//        insertPromo(promoList);
+//        smsList.addAll(Main.smsChecker(con));        
+//        smsMngr.insertSms(smsList, con);
 //        smsMngr.acquireSms(start, end, con);
-        smsMngr.acquireSms("PISO CAKE", con);
+//        smsMngr.acquireSms("403594942", con);
 //        smsMngr.acquireSms(con);
 //        smsMngr.acquireSms(con, "", "", "");
 //        DatabaseConnect.retrievePromos();

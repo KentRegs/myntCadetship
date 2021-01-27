@@ -38,17 +38,18 @@ public class PromoManager implements ManagePromo {
 
             while(resultSet.next()){
 //                logger.log(Level.INFO, resultSet.getString(1) + " : " + resultSet.getString(2));
-                result.add("\npromo code: " + resultSet.getString(1) 
-                		+ "\ndetails: " + resultSet.getString(2)
-                		+ "\nshort code: " + resultSet.getString(3)
-                		+ "\nstart date: " + resultSet.getString(4)
-                		+ "\nend date: " + resultSet.getString(5) + "\n\n");
+                result.add(resultSet.getString(1) 
+                		+ " : promo code: " + resultSet.getString(2)
+                		+ "\ndetails: " + resultSet.getString(3)
+                		+ "\nshort code: " + resultSet.getString(4)
+                		+ "\nstart date: " + resultSet.getString(5)
+                		+ "\nend date: " + resultSet.getString(6) + "\n\n");
                 
-                promo.setPromoCode(resultSet.getString(1));
-                promo.setDetails(resultSet.getString(2));
-                promo.setShortCode(resultSet.getString(3));
-                promo.setStartDate(Timestamp.valueOf(resultSet.getString(4)));
-                promo.setEndDate(Timestamp.valueOf(resultSet.getString(5)));
+                promo.setPromoCode(resultSet.getString(2));
+                promo.setDetails(resultSet.getString(3));
+                promo.setShortCode(resultSet.getString(4));
+                promo.setStartDate(Timestamp.valueOf(resultSet.getString(5)));
+                promo.setEndDate(Timestamp.valueOf(resultSet.getString(6)));
                 
                 promos.add(promo);
             }
@@ -56,7 +57,7 @@ public class PromoManager implements ManagePromo {
             logger.log(Level.SEVERE, "SQLException", e);
         }
 
-        logger.log(Level.INFO, "\nRetrieved promos:\n{0}\n", result);
+//        logger.log(Level.INFO, "\n Promo available! \n");
         
         return promos;
 	}

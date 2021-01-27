@@ -123,7 +123,6 @@ public class SmsManager implements ManageSms {
 		}
 		
 		logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);
-		logger.log(Level.INFO, "\n>> SAMPLE >>: (({0}))\n", result.get(8));
 	}
 
 	@Override
