@@ -19,10 +19,10 @@ public class DatabaseConnect {
     	promoList.addAll(Main.createPromo());    	
     	
         DatabaseConnect.connect();
-        insertPromo(promoList);
-        smsList.addAll(Main.smsChecker(con));        
-        smsMngr.insertSms(smsList, con);
+        insertPromo(promoList);        
         promoMngr.retrievePromos("PISO PIZZA", "1234", con);
+        smsList.addAll(Main.smsChecker(con));              
+        smsMngr.insertSms(smsList, con);
 //        smsMngr.acquireSms(start, end, con);
 //        smsMngr.acquireSms("403594942", con);
 //        smsMngr.acquireSms(con);
