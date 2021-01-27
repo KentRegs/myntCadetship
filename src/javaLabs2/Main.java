@@ -73,7 +73,7 @@ public class Main {
 	
 	// function for checking an SMS
 	public static String smsChecker(Map<Integer, String> smsChkMap) {
-		genSMS();
+//		genSMS();
 		
 		int i = 0;
 		int j = 0;
@@ -159,7 +159,7 @@ public class Main {
 	
 	public static ArrayList<Sms> smsChecker(Connection con) {
 		ArrayList<Promo> checkerArrList = new ArrayList<>();
-		ArrayList<Sms> verifiedSmsList = new ArrayList<>();
+		ArrayList<Sms> processedSmsList = new ArrayList<>();
 		PromoManager promoMngr = new PromoManager();
 		Timestamp before = new Timestamp(0);
 		Timestamp after = new Timestamp(0);
@@ -232,10 +232,12 @@ public class Main {
 			
 			else sms.setStatus("FAIL");
 			
-			verifiedSmsList.add(sms);	
+			processedSmsList.add(sms);			
 			ctr++;
 		}	
-		return verifiedSmsList;
+		logger.log(Level.INFO, "\nDONE PROCESSING SMS! \n\n");
+		
+		return processedSmsList;
 	}				
 	
 	// function for generating random 9-digit mobile numbers (msisdn)
