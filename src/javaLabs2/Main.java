@@ -118,8 +118,8 @@ public class Main {
 	
 	// function for generating an SMS
 	public static ArrayList<Sms> genSMS() {
-		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
-		long end = Timestamp.valueOf("2021-06-30 23:59:00").getTime();
+		long offset = Timestamp.valueOf("2022-02-02 00:00:00").getTime();
+		long end = Timestamp.valueOf("2022-06-30 23:59:00").getTime();
 		long diff = end - offset +1;			
 		
 		// PISO PIZZA SMS data population
@@ -287,26 +287,6 @@ public class Main {
 			endDate = Timestamp.valueOf("2021-09-30 23:59:00");
 		else if(num == 4)
 			endDate = Timestamp.valueOf("2021-10-30 23:59:00");
-	    
-//		try {
-//			parsedDate = dateFormat.parse("2021-06-30 23:59:00");			
-//			
-//			if(num == 1)
-//				parsedDate = dateFormat.parse("2021-04-30 23:59:00");				
-//			else if(num == 2)
-//				parsedDate = dateFormat.parse("2021-05-30 23:59:00");
-//			else if(num == 3)
-//				parsedDate = dateFormat.parse("2021-03-30 23:59:00");
-//			else if(num == 4)
-//				parsedDate = dateFormat.parse("2021-07-30 23:59:00");
-//			
-//			Timestamp end = new java.sql.Timestamp(parsedDate.getTime());
-//			endDate = end;
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		} finally {
-//			//
-//		}
 		
 		return endDate;
 	}

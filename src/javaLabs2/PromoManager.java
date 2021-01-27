@@ -1,13 +1,13 @@
 package javaLabs2;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.sql.PreparedStatement;
 
 public class PromoManager implements ManagePromo {
 	final private static Logger logger = Logger.getLogger(PromoManager.class.getName());
