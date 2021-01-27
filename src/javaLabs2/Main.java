@@ -159,7 +159,7 @@ public class Main {
 	
 	public static ArrayList<Sms> smsChecker(Connection con) {
 		ArrayList<Sms> verifiedSmsList = new ArrayList<>();
-		ArrayList<String> checkerArrList = new ArrayList<>();
+		ArrayList<Promo> checkerArrList = new ArrayList<>();
 		PromoManager promoMngr = new PromoManager();
 		
 		genSMS();
@@ -170,6 +170,7 @@ public class Main {
 			int chk3 = 0;
 			int chk4 = 0;
 			int chk5 = 0;
+			int ctr = 0;
 			
 			Sms sms = new Sms();						
 			
@@ -198,13 +199,31 @@ public class Main {
 					chk4 = 1;
 				}
 			}
+			
+			ArrayList<Integer> index1 = new ArrayList<>();
+			ArrayList<Integer> index2 = new ArrayList<>();
+			
+			
+			// checks if the entered promo code is valid
+			for(Promo entry1 : checkerArrList) {
+				if(entry.getMessage() != null && entry.getMessage().matches(entry1.getPromoCode())) {
+					index1.add(checkerArrList.indexOf(entry1));
+				}
+				
+				if(entry.getShortCode() != null && entry.getMessage().matches(entry1.getShortCode())) {
+					index2.add(checkerArrList.indexOf(entry1));
+				}
+			}
+			
+			if(index1.equals(index2))
+				chk5 = 1;
 					
 			// checks if timestamp is within promo period
 			Timestamp before = new Timestamp(0);
 			Timestamp after = new Timestamp(0);
 			
-			before = Timestamp.valueOf(checkerArrList.get(4));
-			after = Timestamp.valueOf(checkerArrList.get(5));
+			before = checkerArrList.get(ctr).getStartDate();
+			after = checkerArrList.get(ctr).getEndDate();
 			
 			if(entry.getTimestamp() != null && 
 			   entry.getTimestamp().before(after)) {
@@ -225,6 +244,8 @@ public class Main {
 				
 				verifiedSmsList.add(sms);						
 			}
+			
+			ctr++;
 		}	
 			return verifiedSmsList;
 	}				

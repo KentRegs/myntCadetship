@@ -20,7 +20,7 @@ public class DatabaseConnect {
     	
         DatabaseConnect.connect();
         insertPromo(promoList);
-        smsList.addAll(Main.genSMS());        
+        smsList.addAll(Main.smsChecker(con));        
         smsMngr.insertSms(smsList, con);
 //        smsMngr.acquireSms(start, end, con);
         smsMngr.acquireSms("PISO CAKE", con);

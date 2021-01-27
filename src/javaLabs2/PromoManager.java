@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -44,6 +43,7 @@ public class PromoManager implements ManagePromo {
                 		+ "\nshort code: " + resultSet.getString(3)
                 		+ "\nstart date: " + resultSet.getString(4)
                 		+ "\nend date: " + resultSet.getString(5) + "\n\n");
+                
                 promo.setPromoCode(resultSet.getString(1));
                 promo.setDetails(resultSet.getString(2));
                 promo.setShortCode(resultSet.getString(3));
