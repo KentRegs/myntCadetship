@@ -18,9 +18,9 @@ public class DatabaseConnect {
     	promoList.addAll(Main.createPromo());    	
     	
         DatabaseConnect.connect();
-//        insertPromo(promoList);
-//        smsList.addAll(Main.smsChecker(con));        
-//        smsMngr.insertSms(smsList, con);
+        insertPromo(promoList);
+        smsList.addAll(Main.smsChecker(con));        
+        smsMngr.insertSms(smsList, con);
 //        smsMngr.acquireSms(start, end, con);
 //        smsMngr.acquireSms("403594942", con);
 //        smsMngr.acquireSms(con);
@@ -71,8 +71,8 @@ public class DatabaseConnect {
 	            ps.setTimestamp(5, entry.getEndDate());	 	            	            
 	            
 	            ps.execute();
-	            logger.log(Level.INFO, "\n" + 
-        					   		   "Inserted : {0}\n", entry.getEndDate());
+//	            logger.log(Level.INFO, "\n" + 
+//        					   		   "Inserted : {0}\n", entry.getEndDate());
 	        }
 	    }
 	    
@@ -81,14 +81,6 @@ public class DatabaseConnect {
         }
 	    
 	    finally {
-//            try {
-//                if (con != null) {
-//                	con.close();
-//                }
-//            }
-//            catch (Exception e){
-//                logger.log(Level.SEVERE, "ERROR IN CLOSING", e);
-//            }
 	    	logger.info("\nDONE INSERTING PROMOS! \n");
         }	    	    
     }       

@@ -43,15 +43,15 @@ public class SmsManager implements ManageSms {
 			   
 			    ps.execute();
 			    
-			    logger.log(Level.INFO, "\n" + 
-		   					   		   "Inserted : {0}\n", entry.getMsisdn());			    
+//			    logger.log(Level.INFO, "\n" + 
+//		   					   		   "Inserted : {0}\n", entry.getMsisdn());			    
 			}
 			
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "SQLException", e);
 		} 
 		
-//		logger.log(Level.INFO, "\nInserted SMS:\n{0}\n", result);
+		logger.log(Level.INFO, "\nDONE INSERTING SMS! \n");
 	}
 
 	@Override

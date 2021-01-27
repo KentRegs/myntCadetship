@@ -118,9 +118,9 @@ public class Main {
 	
 	// function for generating an SMS
 	public static ArrayList<Sms> genSMS() {
-		long offset = Timestamp.valueOf("2022-02-02 00:00:00").getTime();
-		long end = Timestamp.valueOf("2022-06-30 23:59:00").getTime();
-		long diff = end - offset +1;			
+		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
+		long end = Timestamp.valueOf("2021-12-30 23:59:00").getTime();
+		long diff = end - offset + 1;			
 		
 		// PISO PIZZA SMS data population
 		for(int ctr = 0; ctr < 30; ctr++) {
@@ -158,8 +158,8 @@ public class Main {
 	}
 	
 	public static ArrayList<Sms> smsChecker(Connection con) {
-		ArrayList<Sms> verifiedSmsList = new ArrayList<>();
 		ArrayList<Promo> checkerArrList = new ArrayList<>();
+		ArrayList<Sms> verifiedSmsList = new ArrayList<>();
 		PromoManager promoMngr = new PromoManager();
 		Timestamp before = new Timestamp(0);
 		Timestamp after = new Timestamp(0);
@@ -190,18 +190,8 @@ public class Main {
 			if(entry.getSender() != null && entry.getSender().matches("[a-zA-z]+[ ][a-zA-Z]+")) 
 				chk3 = 1;
 			
-//			// checks if the entered message (promo code) is valid
-			checkerArrList.addAll(promoMngr.retrievePromos(entry.getMessage(), con));				
-//			
-//			if(entry.getMessage() != null && !(checkerArrList.isEmpty())) {
-//				
-//				// checks if the entered shortcode is valid
-//				if(entry.getShortCode() != null &&
-//				   checkerArrList.indexOf(entry.getMessage()) 
-//				   == checkerArrList.indexOf(entry.getShortCode())) {
-//					chk4 = 1;
-//				}
-//			}
+			// checks if the entered message (promo code) is valid
+			checkerArrList.addAll(promoMngr.retrievePromos(entry.getMessage(), con));
 		 
 			ArrayList<Integer> index1 = new ArrayList<>();
 			ArrayList<Integer> index2 = new ArrayList<>();
@@ -228,20 +218,21 @@ public class Main {
 					chk5 = 1;
 			}
 			
-			if(chk1 == 1 && chk2 == 1 && chk3 == 1 &&
-			   chk4 == 1 && chk5 == 1) {
-				sms.setMsisdn(entry.getMsisdn());
-				sms.setRecipient(entry.getRecipient());
-				sms.setSender(entry.getSender());
-				sms.setMessage(entry.getMessage());
-				sms.setShortCode(entry.getShortCode());
-				sms.setTimestamp(entry.getTimestamp());
-				sms.setType(entry.getType());
-				sms.setStatus("SUCCESS");
-				
-				verifiedSmsList.add(sms);						
-			}
+			sms.setMsisdn(entry.getMsisdn());
+			sms.setRecipient(entry.getRecipient());
+			sms.setSender(entry.getSender());
+			sms.setMessage(entry.getMessage());
+			sms.setShortCode(entry.getShortCode());
+			sms.setTimestamp(entry.getTimestamp());
+			sms.setType(entry.getType());
 			
+			if(chk1 == 1 && chk2 == 1 && chk3 == 1 &&
+			   chk4 == 1 && chk5 == 1) 				
+				sms.setStatus("SUCCESS");										
+			
+			else sms.setStatus("FAIL");
+			
+			verifiedSmsList.add(sms);	
 			ctr++;
 		}	
 		return verifiedSmsList;
