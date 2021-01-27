@@ -10,8 +10,9 @@ public class DatabaseConnect {
     static Timestamp start = Timestamp.valueOf("2021-02-01 10:00:00");
     static Timestamp end = Timestamp.valueOf("2021-03-30 23:59:00");
     static ArrayList<Promo> promoList = new ArrayList<>();
+    static PromoManager promoMngr = new PromoManager();
     static ArrayList<Sms> smsList = new ArrayList<>();    
-    static SmsManager smsMngr = new SmsManager();
+    static SmsManager smsMngr = new SmsManager();    
     private static Connection con = null;
     
     public static void main(String[] args){
@@ -21,6 +22,7 @@ public class DatabaseConnect {
         insertPromo(promoList);
         smsList.addAll(Main.smsChecker(con));        
         smsMngr.insertSms(smsList, con);
+        promoMngr.retrievePromos("PISO PIZZA", "1234", con);
 //        smsMngr.acquireSms(start, end, con);
 //        smsMngr.acquireSms("403594942", con);
 //        smsMngr.acquireSms(con);

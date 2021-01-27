@@ -61,4 +61,42 @@ public class PromoManager implements ManagePromo {
         
         return promos;
 	}
+
+	@Override
+	public ArrayList<String> retrievePromos(String message, String shortCode, Connection con) {
+		String selectQuery = "SELECT promoCode, details, startDate, endDate FROM sms_db.promos \r\n"
+			   		   	   + "WHERE promoCode = ? AND shortCode = ?";
+		
+		Promo promo = new Promo();
+		ResultSet resultSet = null;
+		ArrayList<String> result = new ArrayList<>();
+		ArrayList<Promo> promos = new ArrayList<>();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(selectQuery);
+			ps.setString(1, message);
+			ps.setString(2, shortCode);
+			
+			resultSet = ps.executeQuery();
+
+            while(resultSet.next()){
+//                logger.log(Level.INFO, resultSet.getString(1) + " : " + resultSet.getString(2));
+                result.add("promo code: " + resultSet.getString(1) + 
+                		   "\npromo details: " + resultSet.getString(2) +
+                		   "\npromo start date: " + resultSet.getString(3) + 
+                		   "\npromo end date: " + resultSet.getString(4) + "\n\n");
+                
+                promo.setPromoCode(resultSet.getString(1));
+                promo.setDetails(resultSet.getString(2));
+                promo.setStartDate(Timestamp.valueOf(resultSet.getString(3)));
+                promo.setEndDate(Timestamp.valueOf(resultSet.getString(4)));
+                
+                promos.add(promo);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "SQLException", e);
+        }
+		logger.log(Level.INFO, "\nResults: {0}\n", result);
+		return result;
+	}
 }
