@@ -23,7 +23,9 @@ public class SmsManager implements ManageSms {
 					 + "message, "
 					 + "shortCode, "
 					 + "transactionId, "
-					 + "timeStamp) VALUES (?,?,?,?,?,?,?)";
+					 + "timeStamp, "
+					 + "type, "
+					 + "status) VALUES (?,?,?,?,?,?,?,?,?)";
 
 		try {
 			for(Sms entry : smsList) {
@@ -36,6 +38,8 @@ public class SmsManager implements ManageSms {
 			    ps.setString(5, entry.getShortCode());
 			    ps.setInt(6, entry.getTransactionId());
 			    ps.setTimestamp(7, entry.getTimestamp());
+			    ps.setString(8, entry.getType());
+			    ps.setString(8, entry.getStatus());
 			   
 			    ps.execute();
 			    

@@ -10,6 +10,8 @@ public class Sms {
 	private String shortCode;
 	private int transactionId;
 	private Timestamp timeStamp;
+	private String type;
+	private String status;
 	
 	public String getMsisdn() {
 		return msisdn;
@@ -54,5 +56,17 @@ public class Sms {
 	
 	public int getTransactionId() {
 		return transactionId;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

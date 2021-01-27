@@ -17,7 +17,7 @@ public class DatabaseConnect {
 
     public static void main(String[] args){
     	promoList.addAll(Main.createPromo());
-    	smsList.addAll(Main.genSMS());
+    	smsList.addAll(Main.smsChecker(con));
     	
         DatabaseConnect.connect();
 //        DatabaseConnect.insertPromo(promoList);
@@ -27,7 +27,6 @@ public class DatabaseConnect {
 //        smsMngr.acquireSms(con);
 //        smsMngr.acquireSms(con, "", "", "");
 //        DatabaseConnect.retrievePromos();
-//        DatabaseConnect.retrieveSMS();
         DatabaseConnect.disconnect();
     }
 
@@ -129,39 +128,6 @@ public class DatabaseConnect {
         }
 
         logger.log(Level.INFO, "\nRetrieved promos:\n{0}\n", result);
-        return result;
-    }
-    
-    public static ArrayList<String> retrieveSMS(){
-        String selectQuery = "SELECT * FROM sms";
-        Statement statement = null;
-        ResultSet resultSet = null;
-        ArrayList<String> result = new ArrayList<>();
-
-        try {
-            statement = con.createStatement();
-            resultSet = statement.executeQuery(selectQuery);
-
-            while(resultSet.next()){
-//                logger.log(Level.INFO, resultSet.getString(1) + " : " + resultSet.getString(2));
-                result.add(resultSet.getString(1) + " : " + resultSet.getString(2));
-            }
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "SQLException", e);
-        }finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (resultSet != null) {
-                    statement.close();
-                }
-            }catch (Exception e){
-                logger.log(Level.SEVERE, "ERROR IN CLOSING", e);
-            }
-        }
-
-        logger.log(Level.INFO, "\nRetrieved sms:\n{0}\n", result);
         return result;
     }
 }
