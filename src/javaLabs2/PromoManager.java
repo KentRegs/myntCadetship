@@ -64,7 +64,7 @@ public class PromoManager implements ManagePromo {
 
 	@Override
 	public ArrayList<String> retrievePromos(String message, String shortCode, Connection con) {
-		String selectQuery = "SELECT promoCode, details, startDate, endDate FROM sms_db.promos \r\n"
+		String selectQuery = "SELECT DISTINCT promoCode, details, startDate, endDate FROM sms_db.promos \r\n"
 			   		   	   + "WHERE promoCode = ? AND shortCode = ?";
 		
 		Promo promo = new Promo();
@@ -81,7 +81,7 @@ public class PromoManager implements ManagePromo {
 
             while(resultSet.next()){
 //                logger.log(Level.INFO, resultSet.getString(1) + " : " + resultSet.getString(2));
-                result.add("promo code: " + resultSet.getString(1) + 
+                result.add("\npromo code: " + resultSet.getString(1) + 
                 		   "\npromo details: " + resultSet.getString(2) +
                 		   "\npromo start date: " + resultSet.getString(3) + 
                 		   "\npromo end date: " + resultSet.getString(4) + "\n\n");
