@@ -225,8 +225,8 @@ public class Main {
 				sms.setStatus("SUCCESS");
 				
 				verifiedSmsList.add(sms);						
-		}
-			
+			}
+		}	
 			return verifiedSmsList;
 	}				
 	
