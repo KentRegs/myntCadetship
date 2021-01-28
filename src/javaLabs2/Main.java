@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javaLabs2z.test.TestSMSChecker;
+
 // accepts a map w exactly 3 items
 public class Main {
 	final private static Logger logger = Logger.getLogger(TestSMSChecker.class.getName());

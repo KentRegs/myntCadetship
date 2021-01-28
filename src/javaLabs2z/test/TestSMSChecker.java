@@ -1,8 +1,11 @@
-package javaLabs2;
+package javaLabs2z.test;
 
 import java.util.Map;
 import java.util.HashMap;
 import org.junit.jupiter.api.Test;
+
+import javaLabs2.Main;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestSMSChecker {

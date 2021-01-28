@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 public interface ManagePromo {
+	public void insertPromo(ArrayList<Promo> promos, Connection con);
 	// retrieves promo/s given an sms message or sms shortcode
 	public ArrayList<Promo> retrievePromos(String stringValue, Connection con);
 	// retrieves promo details, start date, and end date given sms message 

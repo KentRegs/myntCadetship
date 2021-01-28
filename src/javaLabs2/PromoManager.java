@@ -13,6 +13,39 @@ public class PromoManager implements ManagePromo {
 	final private static Logger logger = Logger.getLogger(PromoManager.class.getName());
 	
 	@Override
+	public void insertPromo(ArrayList<Promo> promos, Connection con){        
+        String query = "INSERT INTO promos "
+        			 + "(promoCode, "
+        			 + "details, "
+        			 + "shortCode, "
+        			 + "startDate, "
+        			 + "endDate) VALUES (?,?,?,?,?)";
+        
+	    try {
+	        for(Promo entry : promos) {
+	        	PreparedStatement ps = con.prepareStatement(query);
+	            ps.setString(1, entry.getPromoCode());
+	            ps.setString(2, entry.getDetails());
+	            ps.setString(3, entry.getShortCode());
+	            ps.setTimestamp(4, entry.getStartDate());
+	            ps.setTimestamp(5, entry.getEndDate());	 	            	            
+	            
+	            ps.execute();
+//	            logger.log(Level.INFO, "\n" + 
+//        					   		   "Inserted : {0}\n", entry.getEndDate());
+	        }
+	    }
+	    
+	    catch (SQLException e) {
+            logger.log(Level.SEVERE, "SQLException", e);
+        }
+	    
+	    finally {
+	    	logger.info("\nDONE INSERTING PROMOS! \n");
+        }	    	    
+    } 
+	
+	@Override
 	public ArrayList<Promo> retrievePromos(String stringValue, Connection con) {		
 		String selectQuery = "";
 		
