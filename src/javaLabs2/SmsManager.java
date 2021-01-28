@@ -3,7 +3,10 @@ package javaLabs2;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -12,7 +15,8 @@ import java.sql.PreparedStatement;
 
 public class SmsManager implements ManageSms {
 	final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());
-	static ArrayList<Sms> smsList = new ArrayList<>();		
+	static ArrayList<Sms> smsList = new ArrayList<>();	
+	static Scanner sc = new Scanner(System.in);	
 	
 	// function for generating random 9-digit mobile numbers (msisdn)
 	public static String genMSISDN() {
@@ -60,19 +64,22 @@ public class SmsManager implements ManageSms {
 	
 	// function for generating an SMS
 	public ArrayList<Sms> genSMS(ArrayList<Promo> availablePromos) {
-		String promoCodes[] = new String[3];
-		String shortCodes[] = new String[3];
-		String details[] = new String[3];
+		Set<String> promoSet = new HashSet<String>();
+		Set<String> shortSet = new HashSet<String>();
+		Set<String> detailsSet = new HashSet<String>();		
 		int ctr = 0;
 		
-		// populate arrays with availale promos from the database
+		// populate arrays with available promos from the database
 		for(Promo entry : availablePromos) {
-			promoCodes[ctr] = entry.getPromoCode();
-			shortCodes[ctr] = entry.getShortCode();
-			details[ctr] = entry.getDetails();
-			
+			if(promoSet.add(entry.getPromoCode()) == true) {
+				shortSet.add(entry.getShortCode());
+				detailsSet.add(entry.getDetails());
+			}
 			ctr++;
 		}
+		
+		Object[] promoCodes = promoSet.toArray();
+		Object[] shortCodes = shortSet.toArray();
 		
 		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
 		long end = Timestamp.valueOf("2021-12-30 23:59:00").getTime();
@@ -95,7 +102,7 @@ public class SmsManager implements ManageSms {
 		}
 		
 		// SMS data population
-		for(int ctr2 = 0; ctr2 < 30; ctr2++) {
+		for(int ctr1 = 0; ctr1 < 30; ctr1++) {
 			Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
 			int end2 = promoCodes.length;
 			int offset2 = 0;			
@@ -106,8 +113,8 @@ public class SmsManager implements ManageSms {
 			sms.setMsisdn(genMSISDN());
 			sms.setRecipient("PISO Inc.");
 			sms.setSender(genName());
-			sms.setMessage(promoCodes[random]);
-			sms.setShortCode(shortCodes[random]);
+			sms.setMessage((String) promoCodes[random]);
+			sms.setShortCode((String) shortCodes[random]);
 			sms.setTimestamp(randTimeStamp);
 			sms.setType("User");	
 			
@@ -116,18 +123,84 @@ public class SmsManager implements ManageSms {
 		return smsList;
 	}
 	
-	public ArrayList<Sms> smsChecker(ArrayList<Promo> availablePromos, Connection con) {
+	// function for generating an SMS
+	public ArrayList<Sms> genSMS(ArrayList<Promo> availablePromos, String register, String shortCode) {
+		if(register.matches("register") || register.matches("Register")) {
+			Set<String> promoSet = new HashSet<String>();
+			int size = availablePromos.size();
+			String name = "";
+			int value = 0;
+			int ctr = 0;			
+			String shortCodes[]  = new String[size];
+			String promoCodes[] = new String[size];							
+			
+			// populate Sets with unique available promos from the database
+			for(Promo entry : availablePromos) {
+				if(promoSet.add(entry.getPromoCode()) == true) {
+					promoCodes[ctr] = entry.getPromoCode();
+					shortCodes[ctr] = entry.getShortCode();				
+				}						
+				ctr++;
+			}
+					
+			for(int i = 0; i < promoCodes.length; i++) {
+				if(shortCode.matches(shortCodes[i])) 
+					value = i;			
+			}					
+			
+			Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());
+			long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
+			long end = Timestamp.valueOf("2021-8-30 23:59:00").getTime();
+			long diff = end - offset + 1;			
+			Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));		
+			
+			
+			logger.log(Level.INFO, "\n\nTo complete the promo registration,"
+								 + " please enter your last name and first name."
+								 + "\nExample: 'Kent Regalado':");
+			name = sc.nextLine();
+			
+//			// SMS data population
+//			Sms sms1 = new Sms();				
+//				
+//			sms1.setMsisdn("8080");
+//			sms1.setRecipient(name);
+//			sms1.setSender("PISO Inc.");
+//			sms1.setMessage("To complete the promo registration, please"
+//						  + "enter your last name and first name."
+//						  + "Example: 'Kent Regalado'");
+//			sms1.setShortCode("placeholder");
+//			sms1.setTimestamp(currentTimeStamp);
+//			sms1.setType("System");	
+//			
+//			smsList.add(sms1);	
+			
+			// SMS data population
+			Sms sms = new Sms();				
+				
+			sms.setMsisdn(genMSISDN());
+			sms.setRecipient("PISO Inc.");
+			sms.setSender(name);
+			sms.setMessage((String) promoCodes[value]);
+			sms.setShortCode(shortCode);
+			sms.setTimestamp(randTimeStamp);
+			sms.setType("User");	
+			
+			smsList.add(sms);				
+		}
+		return smsList;
+	}
+	
+	@Override
+	public ArrayList<Sms> smsChecker(ArrayList<Sms> generatedSmsList, Connection con) {
 		ArrayList<Promo> checkerArrList = new ArrayList<>();
 		ArrayList<Sms> processedSmsList = new ArrayList<>();
 		PromoManager promoMngr = new PromoManager();
 		Timestamp before = new Timestamp(0);
 		Timestamp after = new Timestamp(0);
 		int ctr = 0;
-		
-		// generate SMS ArrayList
-		genSMS(availablePromos);
-		
-		for(Sms entry : processedSmsList) {
+				
+		for(Sms entry : generatedSmsList) {
 			int chk1 = 0;
 			int chk2 = 0;
 			int chk3 = 0;
@@ -191,7 +264,7 @@ public class SmsManager implements ManageSms {
 			
 			else sms.setStatus("FAIL");
 			
-			processedSmsList.add(sms);			
+			processedSmsList.add(sms);
 			ctr++;
 		}	
 		logger.log(Level.INFO, "\nDONE PROCESSING SMS!\n");
@@ -200,12 +273,7 @@ public class SmsManager implements ManageSms {
 	}	
 	
 	@Override
-	public void insertSms(ArrayList<Promo> availablePromos, Connection con) {
-
-		// checks generated SMS objects
-		ArrayList<Sms> processedSmsList = new ArrayList<>();
-		processedSmsList.addAll(smsChecker(availablePromos, con));
-		
+	public void insertSms(ArrayList<Sms> verifiedSmsList, Connection con) {
 		String query = "INSERT INTO sms "
 					 + "(msisdn, "
 					 + "recipient, "
@@ -218,7 +286,7 @@ public class SmsManager implements ManageSms {
 					 + "status) VALUES (?,?,?,?,?,?,?,?,?)";
 
 		try {
-			for(Sms entry : processedSmsList) {
+			for(Sms entry : verifiedSmsList) {
 				PreparedStatement ps = con.prepareStatement(query);
 				
 				ps.setString(1, entry.getMsisdn());
@@ -276,7 +344,6 @@ public class SmsManager implements ManageSms {
 	@Override
 	public void acquireSms(String stringValue, Connection con) {
 		String selectQuery = "";
-		
 		if(stringValue.contains("PISO")) {
 			selectQuery = "SELECT * FROM sms_db.sms	\r\n"
 		   		   	    + "WHERE message = ?";

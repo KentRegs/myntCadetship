@@ -9,5 +9,7 @@ public interface ManagePromo {
 	public ArrayList<Promo> retrievePromos(String stringValue, Connection con);
 	// retrieves promo details, start date, and end date given sms message 
 	// and sms shortcode
-	public ArrayList<Promo> retrievePromos(String message, String shortCode, Connection con);	
+	public ArrayList<Promo> retrievePromos(String message, String shortCode, Connection con);
+	// retrieves all available promos
+	public ArrayList<Promo> retrievePromos(Connection con);
 }

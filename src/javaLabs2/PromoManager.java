@@ -114,8 +114,7 @@ public class PromoManager implements ManagePromo {
 			selectQuery = "SELECT * FROM sms_db.promos \r\n"
 	   		   	    	+ "WHERE shortCode = ?";
 		}
-							
-		Promo promo = new Promo();
+									
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
 		ArrayList<Promo> promos = new ArrayList<>();
@@ -127,13 +126,14 @@ public class PromoManager implements ManagePromo {
 			resultSet = ps.executeQuery();
 
             while(resultSet.next()){
-//                logger.log(Level.INFO, resultSet.getString(1) + " : " + resultSet.getString(2));
+            	Promo promo = new Promo();
+            	
                 result.add(resultSet.getString(1) 
                 		+ " : promo code: " + resultSet.getString(2)
                 		+ "\ndetails: " + resultSet.getString(3)
                 		+ "\nshort code: " + resultSet.getString(4)
                 		+ "\nstart date: " + resultSet.getString(5)
-                		+ "\nend date: " + resultSet.getString(6) + "\n");
+                		+ "\nend date: " + resultSet.getString(6) + "\n\n");
                 
                 promo.setPromoCode(resultSet.getString(2));
                 promo.setDetails(resultSet.getString(3));
@@ -154,10 +154,9 @@ public class PromoManager implements ManagePromo {
 
 	@Override
 	public ArrayList<Promo> retrievePromos(String message, String shortCode, Connection con) {
-		String selectQuery = "SELECT DISTINCT promoCode, details, startDate, endDate FROM sms_db.promos \r\n"
+		String selectQuery = "SELECT DISTINCT promoCode, shortCode, details, startDate, endDate FROM sms_db.promos \r\n"
 			   		   	   + "WHERE promoCode = ? AND shortCode = ?";
-		
-		Promo promo = new Promo();
+				
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
 		ArrayList<Promo> promos = new ArrayList<>();
@@ -170,22 +169,62 @@ public class PromoManager implements ManagePromo {
 			resultSet = ps.executeQuery();
 
             while(resultSet.next()){
-//                logger.log(Level.INFO, resultSet.getString(1) + " : " + resultSet.getString(2));
+            	Promo promo = new Promo();
+
                 result.add("\npromo code: " + resultSet.getString(1) + 
-                		   "\npromo details: " + resultSet.getString(2) +
-                		   "\npromo start date: " + resultSet.getString(3) + 
-                		   "\npromo end date: " + resultSet.getString(4) + "\n");
+                		   "\nshort code: " + resultSet.getString(2) +
+                		   "\npromo details: " + resultSet.getString(3) +
+                		   "\npromo start date: " + resultSet.getString(4) + 
+                		   "\npromo end date: " + resultSet.getString(5) + "\n\n");
                 
                 promo.setPromoCode(resultSet.getString(1));
-                promo.setDetails(resultSet.getString(2));
-                promo.setStartDate(Timestamp.valueOf(resultSet.getString(3)));
-                promo.setEndDate(Timestamp.valueOf(resultSet.getString(4)));
+                promo.setShortCode(resultSet.getString(2));
+                promo.setDetails(resultSet.getString(3));
+                promo.setStartDate(Timestamp.valueOf(resultSet.getString(4)));
+                promo.setEndDate(Timestamp.valueOf(resultSet.getString(5)));
                 
                 promos.add(promo);
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "SQLException", e);
         }
+		logger.log(Level.INFO, "\nResults: {0}\n", result);
+		return promos;
+	}
+
+	@Override
+	public ArrayList<Promo> retrievePromos(Connection con) {
+		String selectQuery = "SELECT * FROM sms_db.promos";
+		
+		ResultSet resultSet = null;
+		ArrayList<String> result = new ArrayList<>();
+		ArrayList<Promo> promos = new ArrayList<>();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(selectQuery);
+			resultSet = ps.executeQuery();
+		
+		 while(resultSet.next()){
+			 Promo promo = new Promo();
+			 
+			 result.add(resultSet.getString(1) 
+             		+ " : promo code: " + resultSet.getString(2)
+             		+ "\ndetails: " + resultSet.getString(3)
+             		+ "\nshort code: " + resultSet.getString(4)
+             		+ "\nstart date: " + resultSet.getString(5)
+             		+ "\nend date: " + resultSet.getString(6) + "\n\n");
+             
+             promo.setPromoCode(resultSet.getString(2));
+             promo.setDetails(resultSet.getString(3));
+             promo.setShortCode(resultSet.getString(4));
+             promo.setStartDate(Timestamp.valueOf(resultSet.getString(5)));
+             promo.setEndDate(Timestamp.valueOf(resultSet.getString(6)));
+		     
+		     promos.add(promo);
+		 }
+		} catch (SQLException e) {
+		 logger.log(Level.SEVERE, "SQLException", e);
+		}
 		logger.log(Level.INFO, "\nResults: {0}\n", result);
 		return promos;
 	}
