@@ -37,10 +37,10 @@ public class DatabaseConnect {
             
             // enables timezones and sets it to Universal Time (UTC)
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sms_db?useTimezone=true&serverTimezone=UTC","root","p4ssw0rd*");
-            logger.info("Connected");
+            logger.info("Connected\n");
         }
         catch(Exception e){
-            logger.log(Level.SEVERE, "Not Connected", e);
+            logger.log(Level.SEVERE, "Not Connected\n", e);
         }
     }
 
@@ -48,10 +48,10 @@ public class DatabaseConnect {
         try{
             if (con != null){
                 con.close();
-                logger.info("Disonnected");
+                logger.info("Disonnected\n");
             }
         }catch(Exception e){
-            logger.log(Level.SEVERE, "Not Connected", e);
+            logger.log(Level.SEVERE, "Not Connected\n", e);
         }
     }      
 }

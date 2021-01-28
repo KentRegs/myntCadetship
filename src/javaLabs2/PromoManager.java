@@ -64,7 +64,7 @@ public class PromoManager implements ManagePromo {
 	}
 	
 	@Override
-	public void insertPromo(Connection con){    
+	public void insertPromo(Connection con) { 
 		ArrayList<Promo> createdPromos = new ArrayList<>();
 		
 		// create promos
@@ -98,7 +98,7 @@ public class PromoManager implements ManagePromo {
         }
 	    
 	    finally {
-	    	logger.info("\nDONE INSERTING PROMOS! \n");
+	    	logger.info("\nDONE INSERTING PROMOS!\n");
         }	    	    
     } 
 	
@@ -133,7 +133,7 @@ public class PromoManager implements ManagePromo {
                 		+ "\ndetails: " + resultSet.getString(3)
                 		+ "\nshort code: " + resultSet.getString(4)
                 		+ "\nstart date: " + resultSet.getString(5)
-                		+ "\nend date: " + resultSet.getString(6) + "\n\n");
+                		+ "\nend date: " + resultSet.getString(6) + "\n");
                 
                 promo.setPromoCode(resultSet.getString(2));
                 promo.setDetails(resultSet.getString(3));
@@ -174,7 +174,7 @@ public class PromoManager implements ManagePromo {
                 result.add("\npromo code: " + resultSet.getString(1) + 
                 		   "\npromo details: " + resultSet.getString(2) +
                 		   "\npromo start date: " + resultSet.getString(3) + 
-                		   "\npromo end date: " + resultSet.getString(4) + "\n\n");
+                		   "\npromo end date: " + resultSet.getString(4) + "\n");
                 
                 promo.setPromoCode(resultSet.getString(1));
                 promo.setDetails(resultSet.getString(2));

@@ -127,7 +127,7 @@ public class SmsManager implements ManageSms {
 		// generate SMS ArrayList
 		genSMS(availablePromos);
 		
-		for(Sms entry : smsList) {
+		for(Sms entry : processedSmsList) {
 			int chk1 = 0;
 			int chk2 = 0;
 			int chk3 = 0;
@@ -194,7 +194,7 @@ public class SmsManager implements ManageSms {
 			processedSmsList.add(sms);			
 			ctr++;
 		}	
-		logger.log(Level.INFO, "\nDONE PROCESSING SMS! \n\n");
+		logger.log(Level.INFO, "\nDONE PROCESSING SMS!\n");
 		
 		return processedSmsList;
 	}	
@@ -238,7 +238,7 @@ public class SmsManager implements ManageSms {
 			logger.log(Level.SEVERE, "SQLException", e);
 		} 
 		
-		logger.log(Level.INFO, "\nDONE INSERTING SMS! \n\n");
+		logger.log(Level.INFO, "\nDONE INSERTING SMS!\n");
 	}
 
 	@Override
