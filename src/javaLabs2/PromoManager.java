@@ -12,8 +12,64 @@ import java.sql.PreparedStatement;
 public class PromoManager implements ManagePromo {
 	final private static Logger logger = Logger.getLogger(PromoManager.class.getName());
 	
+	// function for generating end dates
+	public static Timestamp genDate(int num) {		
+		java.util.Date utilDate = new java.util.Date();
+		Timestamp endDate = new Timestamp(utilDate.getTime());	    
+	    
+	    endDate = Timestamp.valueOf("2021-06-30 23:59:00");
+	    
+	    if(num == 1)
+			endDate = Timestamp.valueOf("2021-07-30 23:59:00");				
+		else if(num == 2)
+			endDate = Timestamp.valueOf("2021-08-30 23:59:00");	
+		else if(num == 3)
+			endDate = Timestamp.valueOf("2021-09-30 23:59:00");
+		else if(num == 4)
+			endDate = Timestamp.valueOf("2021-10-30 23:59:00");
+		
+		return endDate;
+	}
+	
+	// function for generating promos
+	public static ArrayList<Promo> createPromo(){										
+		String promoCodes[] = {"PISO PIZZA", "PISO CAKE", "PISO PASTA", 
+					     	   "PISO FRIES", "PISO ICECREAM"};	
+		String details[] = {"Get a 12 inch pizza for only 1 peso!", 
+						    "Get a vanilla dream cake for only 1 peso!", 
+						    "Get a bowl of oriecchiette for only 1 peso!", 
+						    "Get a bucket of fries for only 1 peso!", 
+						    "Get a tub of vanilla ice cream for only 1 peso!"};
+		String shortCodes[] = {"1234", "5678", "4321", "8765", "9009"};
+		
+		Timestamp start = Timestamp.valueOf("2021-02-01 10:00:00");
+		ArrayList<Promo> promos = new ArrayList<>();	
+		
+		for(int ctr = 0; ctr < 3; ctr++) {
+			Promo promo = new Promo();				
+			
+			// nextInt is normally exclusive of the top value,
+			// so add 1 to make it inclusive
+//				int randNum = ThreadLocalRandom.current().nextInt(0, 5);
+			
+			promo.setPromoCode(promoCodes[ctr]);
+			promo.setDetails(details[ctr]);
+			promo.setShortCode(shortCodes[ctr]);
+			promo.setStartDate(start);
+			promo.setEndDate(genDate(ctr));
+			
+			promos.add(promo);
+		}
+		return promos;		
+	}
+	
 	@Override
-	public void insertPromo(ArrayList<Promo> promos, Connection con){        
+	public void insertPromo(Connection con){    
+		ArrayList<Promo> createdPromos = new ArrayList<>();
+		
+		// create promos
+		createdPromos.addAll(createPromo());
+		
         String query = "INSERT INTO promos "
         			 + "(promoCode, "
         			 + "details, "
@@ -22,8 +78,9 @@ public class PromoManager implements ManagePromo {
         			 + "endDate) VALUES (?,?,?,?,?)";
         
 	    try {
-	        for(Promo entry : promos) {
+	        for(Promo entry : createdPromos) {
 	        	PreparedStatement ps = con.prepareStatement(query);
+	        	
 	            ps.setString(1, entry.getPromoCode());
 	            ps.setString(2, entry.getDetails());
 	            ps.setString(3, entry.getShortCode());
@@ -96,7 +153,7 @@ public class PromoManager implements ManagePromo {
 	}
 
 	@Override
-	public ArrayList<String> retrievePromos(String message, String shortCode, Connection con) {
+	public ArrayList<Promo> retrievePromos(String message, String shortCode, Connection con) {
 		String selectQuery = "SELECT DISTINCT promoCode, details, startDate, endDate FROM sms_db.promos \r\n"
 			   		   	   + "WHERE promoCode = ? AND shortCode = ?";
 		
@@ -130,6 +187,6 @@ public class PromoManager implements ManagePromo {
             logger.log(Level.SEVERE, "SQLException", e);
         }
 		logger.log(Level.INFO, "\nResults: {0}\n", result);
-		return result;
+		return promos;
 	}
 }

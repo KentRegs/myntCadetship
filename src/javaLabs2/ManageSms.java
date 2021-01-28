@@ -5,7 +5,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 public interface ManageSms {	
-	public void insertSms(ArrayList<Sms> smsList, Connection con);
+	public ArrayList<Sms> smsChecker(ArrayList<Promo> availablePromos, Connection con);
+	public void insertSms(ArrayList<Promo> availablePromos, Connection con);
 	public void acquireSms(Timestamp start, Timestamp end, Connection con);
 	// stringValue may be a promo code or msisdn
 	public void acquireSms(String stringValue, Connection con);

@@ -16,19 +16,15 @@ import javaLabs2z.test.TestSMSChecker;
 public class Main {
 	final private static Logger logger = Logger.getLogger(TestSMSChecker.class.getName());
 	static Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());
-	static Map<Integer, String> smsMap = new HashMap<Integer, String>();
-	static Timestamp start = Timestamp.valueOf("2021-02-01 10:00:00");
-	private static ArrayList<Promo> promos = new ArrayList<>();	
-	private static ArrayList<Sms> smsList = new ArrayList<>();
-	static Scanner sc = new Scanner(System.in);
-	
+	static Map<Integer, String> smsMap = new HashMap<Integer, String>();		
+	static Scanner sc = new Scanner(System.in);	
 	static String promoCodes[] = {"PISO PIZZA", "PISO CAKE", "PISO PASTA", 
-			   			   "PISO FRIES", "PISO ICECREAM"};	
+						   "PISO FRIES", "PISO ICECREAM"};	
 	static String details[] = {"Get a 12 inch pizza for only 1 peso!", 
-						"Get a vanilla dream cake for only 1 peso!", 
-						"Get a bowl of oriecchiette for only 1 peso!", 
-						"Get a bucket of fries for only 1 peso!", 
-						"Get a tub of vanilla ice cream for only 1 peso!"};
+					    "Get a vanilla dream cake for only 1 peso!", 
+					    "Get a bowl of oriecchiette for only 1 peso!", 
+					    "Get a bucket of fries for only 1 peso!", 
+					    "Get a tub of vanilla ice cream for only 1 peso!"};
 	static String shortCodes[] = {"1234", "5678", "4321", "8765", "9009"};
 	
 	public static void main(String[] args){
@@ -39,8 +35,8 @@ public class Main {
 		
 		Map<Integer, String> smsChkMap = new HashMap<Integer, String>();	
 		
-		createPromo();
-		showPromos();
+//		createPromo();
+//		showPromos();
 		
 		logger.log(Level.INFO, "Please enter your 9-digit mobile number: ");
 		msisdn = sc.nextLine();
@@ -116,203 +112,5 @@ public class Main {
 		else value = "FAIL";
 		
 		return value;
-	}
-	
-	// function for generating an SMS
-	public static ArrayList<Sms> genSMS() {
-		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
-		long end = Timestamp.valueOf("2021-12-30 23:59:00").getTime();
-		long diff = end - offset + 1;			
-		
-		// PISO PIZZA SMS data population
-		for(int ctr = 0; ctr < 30; ctr++) {
-			Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
-			Sms sms = new Sms();				
-			
-			sms.setMsisdn(genMSISDN());
-			sms.setRecipient("PISO Inc.");
-			sms.setSender(genName());
-			sms.setMessage("PISO PIZZA");
-			sms.setShortCode("1234");
-			sms.setTimestamp(randTimeStamp);
-			sms.setType("User");			
-			
-			smsList.add(sms);
-		}
-		
-		// SMS data population
-		for(int ctr = 0; ctr < 30; ctr++) {
-			Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
-			int random = (int) ((Math.random() * (3 - 0)) + 0);
-			Sms sms = new Sms();				
-			
-			sms.setMsisdn(genMSISDN());
-			sms.setRecipient("PISO Inc.");
-			sms.setSender(genName());
-			sms.setMessage(promoCodes[random]);
-			sms.setShortCode(shortCodes[random]);
-			sms.setTimestamp(randTimeStamp);
-			sms.setType("User");	
-			
-			smsList.add(sms);
-		}
-		return smsList;
-	}
-	
-	public static ArrayList<Sms> smsChecker(Connection con) {
-		ArrayList<Promo> checkerArrList = new ArrayList<>();
-		ArrayList<Sms> processedSmsList = new ArrayList<>();
-		PromoManager promoMngr = new PromoManager();
-		Timestamp before = new Timestamp(0);
-		Timestamp after = new Timestamp(0);
-		int ctr = 0;
-		
-		// generate SMS ArrayList
-		genSMS();
-		
-		for(Sms entry : smsList) {
-			int chk1 = 0;
-			int chk2 = 0;
-			int chk3 = 0;
-			int chk4 = 0;
-			int chk5 = 0;						
-			
-			Sms sms = new Sms();						
-			
-			// checks if the msisdn is valid			
-			if(entry.getMsisdn() != null && entry.getMsisdn().matches("[0-9]+")
-		       && entry.getMsisdn().length() == 9) 
-				chk1 = 1;
-			
-			// checks if the recipient is valid
-			if(entry.getRecipient() != null && entry.getRecipient().matches("PISO Inc."))
-				chk2 = 1;
-			
-			// checks if the sender has a valid name
-			if(entry.getSender() != null && entry.getSender().matches("[a-zA-z]+[ ][a-zA-Z]+")) 
-				chk3 = 1;
-			
-			// checks if the entered message (promo code) is valid
-			checkerArrList.addAll(promoMngr.retrievePromos(entry.getMessage(), con));
-		 
-			ArrayList<Integer> index1 = new ArrayList<>();
-			ArrayList<Integer> index2 = new ArrayList<>();
-			
-			// checks if the entered message (promo code) is valid
-			for(Promo entry1 : checkerArrList) {
-				if(entry.getMessage() != null && entry.getMessage().matches(entry1.getPromoCode()))
-					index1.add(checkerArrList.indexOf(entry1));				
-				
-				if(entry.getShortCode() != null && entry.getShortCode().matches(entry1.getShortCode())) 
-					index2.add(checkerArrList.indexOf(entry1));				
-			}
-			
-			if(index1.equals(index2))
-				chk4 = 1;
-					
-			// checks if timestamp is within promo period						
-			before = checkerArrList.get(ctr).getStartDate();
-			after = checkerArrList.get(ctr).getEndDate();
-			
-			if(entry.getTimestamp() != null && 
-			   entry.getTimestamp().before(after)) {
-				if(entry.getTimestamp().after(before))
-					chk5 = 1;
-			}
-			
-			sms.setMsisdn(entry.getMsisdn());
-			sms.setRecipient(entry.getRecipient());
-			sms.setSender(entry.getSender());
-			sms.setMessage(entry.getMessage());
-			sms.setShortCode(entry.getShortCode());
-			sms.setTimestamp(entry.getTimestamp());
-			sms.setType(entry.getType());
-			
-			if(chk1 == 1 && chk2 == 1 && chk3 == 1 &&
-			   chk4 == 1 && chk5 == 1) 				
-				sms.setStatus("SUCCESS");										
-			
-			else sms.setStatus("FAIL");
-			
-			processedSmsList.add(sms);			
-			ctr++;
-		}	
-		logger.log(Level.INFO, "\nDONE PROCESSING SMS! \n\n");
-		
-		return processedSmsList;
-	}				
-	
-	// function for generating random 9-digit mobile numbers (msisdn)
-	public static String genMSISDN() {
-		long num = new Random().nextInt(999999999);
-
-		return String.format("%09d", num);
-	}
-	
-	// function for generating random names
-	public static String genName() {
-		String[] firstName = { "Michael", "Michelle", "Donald", "Lakeith",
-						       "Hiro", "Brendan", "Morgan", "Robert", "Steven", "David", "Stephen", 
-						       "Harold", "William", "Matthew", "Max", 
-						       "Christina", "Yna", "Bea", "Mika", "Samantha", "Yara", "Kiara",
-						       "Isabelle", "Mila", "Miles"};
-		String[] lastName = { " Rourke", " Smith", " Johnson", " Williams",
-						      " Ong", " Davis", " Miller", " Adobo", " Wilson", " Peterson", " Ramirez", 
-						      " Murai", " Stanfield", " Bourdain", " Picasso", 
-						      " Ng", " Philips", " Riverson", " Abbott", " Moore", " Babbage", " Lee",
-						      " White", " Gonzales", " Lopez"};
-		Random randName = new Random();
-		
-		return firstName[randName.nextInt(firstName.length)] +
-			   lastName[randName.nextInt(lastName.length)];
-	}
-	
-	// function for generating end dates
-	public static Timestamp genDate(int num) {		
-		java.util.Date utilDate = new java.util.Date();
-		Timestamp endDate = new Timestamp(utilDate.getTime());	    
-	    
-	    endDate = Timestamp.valueOf("2021-06-30 23:59:00");
-	    
-	    if(num == 1)
-			endDate = Timestamp.valueOf("2021-07-30 23:59:00");				
-		else if(num == 2)
-			endDate = Timestamp.valueOf("2021-08-30 23:59:00");	
-		else if(num == 3)
-			endDate = Timestamp.valueOf("2021-09-30 23:59:00");
-		else if(num == 4)
-			endDate = Timestamp.valueOf("2021-10-30 23:59:00");
-		
-		return endDate;
-	}
-	
-	// function for generating promos
-	public static ArrayList<Promo> createPromo(){										
-		for(int ctr = 0; ctr < 3; ctr++) {
-			Promo promo = new Promo();				
-			
-			// nextInt is normally exclusive of the top value,
-			// so add 1 to make it inclusive
-//			int randNum = ThreadLocalRandom.current().nextInt(0, 5);
-			
-			promo.setPromoCode(promoCodes[ctr]);
-			promo.setDetails(details[ctr]);
-			promo.setShortCode(shortCodes[ctr]);
-			promo.setStartDate(start);
-			promo.setEndDate(genDate(ctr));
-			
-			promos.add(promo);
-		}
-		return promos;		
-	}
-	
-	public static void showPromos() {
-		for(Promo promo: promos) {
-			logger.log(Level.INFO, "\n\npromo code: " + promo.getPromoCode() +
-				                   "\ndetails: " + promo.getDetails() +
-				                   "\nshortcode: " + promo.getShortCode() + 
-				                   "\nstart date: " + promo.getStartDate() + 
-				                   "\nend date: " + promo.getEndDate() + "\n");
-		}
-	}
+	}			
 }

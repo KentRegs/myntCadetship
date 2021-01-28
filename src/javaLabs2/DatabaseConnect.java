@@ -9,23 +9,20 @@ public class DatabaseConnect {
     final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());
     static Timestamp start = Timestamp.valueOf("2021-02-01 10:00:00");
     static Timestamp end = Timestamp.valueOf("2021-03-30 23:59:00");
-    static ArrayList<Promo> promoList = new ArrayList<>();
-    static PromoManager promoMngr = new PromoManager();
-    static ArrayList<Sms> smsList = new ArrayList<>();    
+    static ArrayList<Promo> availablePromos = new ArrayList<>();
+    static PromoManager promoMngr = new PromoManager();       
     static SmsManager smsMngr = new SmsManager();    
     private static Connection con = null;
     
-    public static void main(String[] args){
-    	promoList.addAll(Main.createPromo());    	
+    public static void main(String[] args){	
     	
         DatabaseConnect.connect();
-        promoMngr.insertPromo(promoList, con);        
+        promoMngr.insertPromo(con);        
         // user sends "PROMO" to the shortcode to see the details of the promo
-        promoMngr.retrievePromos("PISO PIZZA", "1234", con);
-        
+        availablePromos.addAll(promoMngr.retrievePromos("PISO PIZZA", "1234", con));        
         //user sends "REGISTER" to the shortcode to avail the promo
-        smsList.addAll(Main.smsChecker(con));              
-        smsMngr.insertSms(smsList, con);
+//        processedSmsList.addAll(smsMngr.smsChecker(availablePromos, con));              
+        smsMngr.insertSms(availablePromos, con);
 //        smsMngr.acquireSms(start, end, con);
 //        smsMngr.acquireSms("403594942", con);
 //        smsMngr.acquireSms(con);
