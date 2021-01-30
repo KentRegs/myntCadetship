@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.PreparedStatement;
@@ -274,45 +275,72 @@ public class SmsManager implements ManageSms {
 	
 	@Override
 	public void insertSms(ArrayList<Sms> verifiedSmsList, Connection con) {
-		String query = "INSERT INTO sms "
-					 + "(msisdn, "
-					 + "recipient, "
-					 + "sender, "
-					 + "message, "
-					 + "shortCode, "
-					 + "transactionId, "
-					 + "timeStamp, "
-					 + "type, "
-					 + "status) VALUES (?,?,?,?,?,?,?,?,?)";
-
-		try {
-			for(Sms entry : verifiedSmsList) {
-				PreparedStatement ps = con.prepareStatement(query);
-				
-				ps.setString(1, entry.getMsisdn());
-			    ps.setString(2, entry.getRecipient());
-			    ps.setString(3, entry.getSender());
-			    ps.setString(4, entry.getMessage());
-			    ps.setString(5, entry.getShortCode());
-			    ps.setInt(6, entry.getTransactionId());
-			    ps.setTimestamp(7, entry.getTimestamp());
-			    ps.setString(8, entry.getType());
-			    ps.setString(9, entry.getStatus());
-			   
-			    ps.execute();		    
-			}
+		for(Sms entry : verifiedSmsList) {
+			String query = "INSERT INTO sms "
+						 + "(msisdn,"
+						 + "recipient,"
+						 + "sender,"
+						 + "message,"
+						 + "shortCode,"
+						 + "transactionId,"
+						 + "timeStamp,"
+						 + "type,"
+						 + "status) VALUES "
+						 + "(aes_encrypt(" + entry.getMsisdn() + ", sha2('key', 512)),'"
+						 + entry.getRecipient()
+						 + "',aes_encrypt('" + entry.getSender() + "', sha2('key', 512)),'"
+						 + entry.getMessage() + "','"
+						 + entry.getShortCode()
+						 + "',aes_encrypt(" + entry.getTransactionId() + ", sha2('key', 512)),'"
+						 + entry.getTimestamp() + "','"
+						 + entry.getType() + "','"
+						 + entry.getStatus() + "')";
 			
-		} catch (SQLException e) {
-			logger.log(Level.SEVERE, "SQLException", e);
-		} 
+			Statement statement = null;
+	        int result = 0;
+			
+	//				PreparedStatement ps = con.prepareStatement(query);
+	//				ps.execute();	
+			try {
+	            statement = con.createStatement();
+	            result = statement.executeUpdate(query);
+	            logger.log(Level.INFO, "\nDONE INSERTING SMS!\n");
+			} catch (SQLException e) {
+				logger.log(Level.SEVERE, "SQLException", e);
+			}
+		} 			
 		
-		logger.log(Level.INFO, "\nDONE INSERTING SMS!\n");
+//			for(Sms entry : verifiedSmsList) {
+//				PreparedStatement ps = con.prepareStatement(query);
+//				
+//				ps.setString(1, entry.getMsisdn());
+//			    ps.setString(2, entry.getRecipient());
+//			    ps.setString(3, entry.getSender());
+//			    ps.setString(4, entry.getMessage());
+//			    ps.setString(5, entry.getShortCode());
+//			    ps.setInt(6, entry.getTransactionId());
+//			    ps.setTimestamp(7, entry.getTimestamp());
+//			    ps.setString(8, entry.getType());
+//			    ps.setString(9, entry.getStatus());
+//			   
+//			    ps.execute();		    
+//			}			
 	}
 
 	@Override
 	public void acquireSms(Timestamp start, Timestamp end, Connection con) {
-		String selectQuery = "SELECT * FROM sms_db.sms	\r\n"
-						   + "WHERE timeStamp BETWEEN ? AND ?";		
+		String selectQuery = "SELECT idSMS,"				
+						   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+						   + "recipient,"
+						   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+						   + "message,"
+						   + "shortCode,"
+						   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+						   + "timeStamp,"
+						   + "type,"
+						   + "status \r\n"
+						   + "FROM sms_db.sms \r\n"
+						   + "WHERE timeStamp BETWEEN ? AND ?;";		
 		
         ResultSet resultSet = null;
         ArrayList<String> result = new ArrayList<>();
@@ -332,7 +360,9 @@ public class SmsManager implements ManageSms {
                 		+ "\nmessage: " + resultSet.getString(5)
                 		+ "\nshortcode: " + resultSet.getString(6)
                 		+ "\ntransaction id: " + resultSet.getInt(7)
-                		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
+                		+ "\ntimestamp: " + resultSet.getTimestamp(8)
+                		+ "\ntype:: " + resultSet.getString(9)
+                		+ "\nstatus: " + resultSet.getString(10)+ "\n\n");
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "SQLException", e);
@@ -345,12 +375,32 @@ public class SmsManager implements ManageSms {
 	public void acquireSms(String stringValue, Connection con) {
 		String selectQuery = "";
 		if(stringValue.contains("PISO")) {
-			selectQuery = "SELECT * FROM sms_db.sms	\r\n"
-		   		   	    + "WHERE message = ?";
+			selectQuery = "SELECT idSMS,"				
+					   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+					   + "recipient,"
+					   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+					   + "message,"
+					   + "shortCode,"
+					   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+					   + "timeStamp,"
+					   + "type,"
+					   + "status \r\n"
+					   + "FROM sms_db.sms \r\n"
+		   		   	   + "WHERE message = ?;";
 		}
 		else {
-			selectQuery = "SELECT * FROM sms_db.sms	\r\n"
-	   		   	    	+ "WHERE msisdn = ?";
+			selectQuery = "SELECT idSMS,"				
+					   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+					   + "recipient,"
+					   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+					   + "message,"
+					   + "shortCode,"
+					   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+					   + "timeStamp,"
+					   + "type,"
+					   + "status \r\n"
+					   + "FROM sms_db.sms \r\n"
+	   		   	       + "WHERE msisdn = ?;";
 		}
 
 		ResultSet resultSet = null;
@@ -362,16 +412,18 @@ public class SmsManager implements ManageSms {
 			
 			resultSet = ps.executeQuery();
 		
-		 while(resultSet.next()){
-		 	result.add("\nidSMS: " + resultSet.getInt(1) 
-		     		+ "\nmsisdn: " + resultSet.getString(2)
-		     		+ "\nrecipient: " + resultSet.getString(3)
-		     		+ "\nsender: " + resultSet.getString(4)
-		     		+ "\nmessage: " + resultSet.getString(5)
-		     		+ "\nshortcode: " + resultSet.getString(6)
-		     		+ "\ntransaction id: " + resultSet.getInt(7)
-		     		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
-		 }
+			while(resultSet.next()){
+            	result.add("\nidSMS: " + resultSet.getInt(1) 
+                		+ "\nmsisdn: " + resultSet.getString(2)
+                		+ "\nrecipient: " + resultSet.getString(3)
+                		+ "\nsender: " + resultSet.getString(4)
+                		+ "\nmessage: " + resultSet.getString(5)
+                		+ "\nshortcode: " + resultSet.getString(6)
+                		+ "\ntransaction id: " + resultSet.getInt(7)
+                		+ "\ntimestamp: " + resultSet.getTimestamp(8)
+                		+ "\ntype:: " + resultSet.getString(9)
+                		+ "\nstatus: " + resultSet.getString(10)+ "\n\n");
+            }
 		} catch (SQLException e) {
 		 logger.log(Level.SEVERE, "SQLException", e);
 		}
@@ -382,7 +434,17 @@ public class SmsManager implements ManageSms {
 
 	@Override
 	public void acquireSms(Connection con) {
-		String selectQuery = "SELECT * FROM sms_db.sms";		
+		String selectQuery = "SELECT idSMS,"				
+						   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+						   + "recipient,"
+						   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+						   + "message,"
+						   + "shortCode,"
+						   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+						   + "timeStamp,"
+						   + "type,"
+						   + "status \r\n"
+						   + "FROM sms_db.sms;";		
 
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
@@ -392,16 +454,18 @@ public class SmsManager implements ManageSms {
 			
 			resultSet = ps.executeQuery();
 		
-		 while(resultSet.next()){
-		 	result.add("\nidSMS: " + resultSet.getInt(1) 
-		     		+ "\nmsisdn: " + resultSet.getString(2)
-		     		+ "\nrecipient: " + resultSet.getString(3)
-		     		+ "\nsender: " + resultSet.getString(4)
-		     		+ "\nmessage: " + resultSet.getString(5)
-		     		+ "\nshortcode: " + resultSet.getString(6)
-		     		+ "\ntransaction id: " + resultSet.getInt(7)
-		     		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
-		 }
+			while(resultSet.next()){
+            	result.add("\nidSMS: " + resultSet.getInt(1) 
+                		+ "\nmsisdn: " + resultSet.getString(2)
+                		+ "\nrecipient: " + resultSet.getString(3)
+                		+ "\nsender: " + resultSet.getString(4)
+                		+ "\nmessage: " + resultSet.getString(5)
+                		+ "\nshortcode: " + resultSet.getString(6)
+                		+ "\ntransaction id: " + resultSet.getInt(7)
+                		+ "\ntimestamp: " + resultSet.getTimestamp(8)
+                		+ "\ntype:: " + resultSet.getString(9)
+                		+ "\nstatus: " + resultSet.getString(10)+ "\n\n");
+            }
 		} catch (SQLException e) {
 		 logger.log(Level.SEVERE, "SQLException", e);
 		}
@@ -418,8 +482,18 @@ public class SmsManager implements ManageSms {
 	@Override
 	public void acquireSms(Connection con, String... msisdn) {		
 		for(String curr : msisdn) {
-			String selectQuery = "SELECT * FROM sms_db.sms	\r\n"
-							   + "WHERE msisdn = ?";		
+			String selectQuery = "SELECT idSMS,"				
+							   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+							   + "recipient,"
+							   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+							   + "message,"
+							   + "shortCode,"
+							   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+							   + "timeStamp,"
+							   + "type,"
+							   + "status \r\n"
+							   + "FROM sms_db.sms \r\n"
+							   + "WHERE msisdn = ?;";		
 	
 			ResultSet resultSet = null;
 			ArrayList<String> result = new ArrayList<>();
@@ -430,16 +504,18 @@ public class SmsManager implements ManageSms {
 				
 				resultSet = ps.executeQuery();
 			
-			 while(resultSet.next()){
-			 	result.add("\nidSMS: " + resultSet.getInt(1) 
-			     		+ "\nmsisdn: " + resultSet.getString(2)
-			     		+ "\nrecipient: " + resultSet.getString(3)
-			     		+ "\nsender: " + resultSet.getString(4)
-			     		+ "\nmessage: " + resultSet.getString(5)
-			     		+ "\nshortcode: " + resultSet.getString(6)
-			     		+ "\ntransaction id: " + resultSet.getInt(7)
-			     		+ "\ntimestamp: " + resultSet.getTimestamp(8) + "\n\n");
-			 }
+				while(resultSet.next()){
+	            	result.add("\nidSMS: " + resultSet.getInt(1) 
+	                		+ "\nmsisdn: " + resultSet.getString(2)
+	                		+ "\nrecipient: " + resultSet.getString(3)
+	                		+ "\nsender: " + resultSet.getString(4)
+	                		+ "\nmessage: " + resultSet.getString(5)
+	                		+ "\nshortcode: " + resultSet.getString(6)
+	                		+ "\ntransaction id: " + resultSet.getInt(7)
+	                		+ "\ntimestamp: " + resultSet.getTimestamp(8)
+	                		+ "\ntype:: " + resultSet.getString(9)
+	                		+ "\nstatus: " + resultSet.getString(10)+ "\n\n");
+	            }
 			} catch (SQLException e) {
 			 logger.log(Level.SEVERE, "SQLException", e);
 			}

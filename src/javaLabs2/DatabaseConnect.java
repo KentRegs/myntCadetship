@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class DatabaseConnect {
     final private static Logger logger = Logger.getLogger(DatabaseConnect.class.getName());
     static Timestamp start = Timestamp.valueOf("2021-02-01 10:00:00");
-    static Timestamp end = Timestamp.valueOf("2021-03-30 23:59:00");
+    static Timestamp end = Timestamp.valueOf("2021-12-30 23:59:00");
     static ArrayList<Promo> availablePromos = new ArrayList<>();
     static ArrayList<Sms> generatedSmsList = new ArrayList<>();
     static ArrayList<Sms> verifiedSmsList = new ArrayList<>();
@@ -23,9 +23,8 @@ public class DatabaseConnect {
         availablePromos.addAll(promoMngr.retrievePromos(con));
         // user sends "PROMO" to the shortcode to see the details of the promo
 //        promoMngr.retrievePromos("PISO CAKE", "5678", con);
-        //user sends "REGISTExR" to the shortcode to avail the promo
-        generatedSmsList.addAll(smsMngr.genSMS(availablePromos, "Register", "1234"));
-//        processedSmsList.addAll(smsMngr.smsChecker(availablePromos, con));
+        //user sends "REGISTER" to the shortcode to avail the promo
+        generatedSmsList.addAll(smsMngr.genSMS(availablePromos, "Register", "5678"));
 //        generatedSmsList.addAll(smsMngr.genSMS(availablePromos));
         verifiedSmsList.addAll(smsMngr.smsChecker(generatedSmsList, con));
         smsMngr.insertSms(verifiedSmsList, con);
@@ -33,7 +32,6 @@ public class DatabaseConnect {
 //        smsMngr.acquireSms("403594942", con);
 //        smsMngr.acquireSms(con);
 //        smsMngr.acquireSms(con, "", "", "");
-//        DatabaseConnect.retrievePromos();
         DatabaseConnect.disconnect();
     }
 
