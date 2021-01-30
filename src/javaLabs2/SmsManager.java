@@ -64,62 +64,104 @@ public class SmsManager implements ManageSms {
 	}
 	
 	// function for generating an SMS
-	public ArrayList<Sms> genSMS(ArrayList<Promo> availablePromos) {
-		Set<String> promoSet = new HashSet<String>();
-		Set<String> shortSet = new HashSet<String>();
-		Set<String> detailsSet = new HashSet<String>();		
-		int ctr = 0;
-		
-		// populate arrays with available promos from the database
-		for(Promo entry : availablePromos) {
-			if(promoSet.add(entry.getPromoCode()) == true) {
-				shortSet.add(entry.getShortCode());
-				detailsSet.add(entry.getDetails());
+	public ArrayList<Sms> genSMS(ArrayList<Promo> availablePromos, String register) {
+		if(register.matches("register") || register.matches("Register")) {
+			Set<String> promoSet = new HashSet<String>();
+			int size = availablePromos.size();
+			int ctr = 0;			
+			String shortCodes[]  = new String[size];
+			String promoCodes[] = new String[size];	
+			ArrayList<String> names1 = new ArrayList<String>();
+			ArrayList<String> names2 = new ArrayList<String>();
+			
+			// populate Sets with unique available promos from the database
+			for(Promo entry : availablePromos) {
+				if(promoSet.add(entry.getPromoCode()) == true) {
+					promoCodes[ctr] = entry.getPromoCode();
+					shortCodes[ctr] = entry.getShortCode();
+					ctr++;
+				}										
+			}					
+			
+			Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());
+			
+			long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
+			long end = Timestamp.valueOf("2021-12-30 23:59:00").getTime();
+			long diff = end - offset + 1;			
+            
+            // System responses
+			for(int ctr1 = 0; ctr1 < 30; ctr1++) {
+				// System-sent SMS data population
+                Sms sms1 = new Sms();				
+                names1.add(genName());
+					
+				sms1.setMsisdn("8080");
+				sms1.setRecipient(names1.get(ctr1));
+				sms1.setSender("PISO Inc.");
+				sms1.setMessage("To complete the promo registration, please"
+							  + " enter your first name and last name."
+							  + " Example: Kent Regalado");
+				sms1.setShortCode("----");
+				sms1.setTimestamp(currentTimeStamp);
+				sms1.setType("System");	
+				
+				smsList.add(sms1);	
 			}
-			ctr++;
-		}
-		
-		Object[] promoCodes = promoSet.toArray();
-		Object[] shortCodes = shortSet.toArray();
-		
-		long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
-		long end = Timestamp.valueOf("2021-12-30 23:59:00").getTime();
-		long diff = end - offset + 1;			
-		
-		// PISO PIZZA SMS data population
-		for(int ctr1 = 0; ctr1 < 30; ctr1++) {
-			Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
-			Sms sms = new Sms();				
+
+			// PISO PIZZA User-sent SMS data population
+			for(int ctr1 = 0; ctr1 < 30; ctr1++) {
+				Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
+				Sms sms = new Sms();				
+				
+				sms.setMsisdn(genMSISDN());
+				sms.setRecipient("PISO Inc.");
+				sms.setSender(names1.get(ctr1));
+				sms.setMessage("PISO PIZZA");
+				sms.setShortCode("1234");
+				sms.setTimestamp(randTimeStamp);
+				sms.setType("User");			
+				
+				smsList.add(sms);
+            }
+            
+            // System responses
+			for(int ctr1 = 0; ctr1 < 30; ctr1++) {
+				// System-sent SMS data population
+                Sms sms1 = new Sms();				
+                names2.add(genName());
+					
+				sms1.setMsisdn("8080");
+				sms1.setRecipient(names2.get(ctr1));
+				sms1.setSender("PISO Inc.");
+				sms1.setMessage("To complete the promo registration, please"
+							  + " enter your first name and last name."
+							  + " Example: Kent Regalado");
+				sms1.setShortCode("----");
+				sms1.setTimestamp(currentTimeStamp);
+				sms1.setType("System");	
+				
+				smsList.add(sms1);	
+			}
 			
-			sms.setMsisdn(genMSISDN());
-			sms.setRecipient("PISO Inc.");
-			sms.setSender(genName());
-			sms.setMessage("PISO PIZZA");
-			sms.setShortCode("1234");
-			sms.setTimestamp(randTimeStamp);
-			sms.setType("User");			
-			
-			smsList.add(sms);
-		}
-		
-		// SMS data population
-		for(int ctr1 = 0; ctr1 < 30; ctr1++) {
-			Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
-			int end2 = promoCodes.length;
-			int offset2 = 0;			
-			int random = (int) ((Math.random() * (end2 - offset2)) + offset2);
-			
-			Sms sms = new Sms();				
-			
-			sms.setMsisdn(genMSISDN());
-			sms.setRecipient("PISO Inc.");
-			sms.setSender(genName());
-			sms.setMessage((String) promoCodes[random]);
-			sms.setShortCode((String) shortCodes[random]);
-			sms.setTimestamp(randTimeStamp);
-			sms.setType("User");	
-			
-			smsList.add(sms);
+			// SMS data population
+			for(int ctr1 = 0; ctr1 < 30; ctr1++) {
+				Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
+				int end2 = promoCodes.length;
+				int offset2 = 0;			
+				int random = (int) ((Math.random() * (end2 - offset2)) + offset2);				
+				
+				Sms sms = new Sms();				
+				
+				sms.setMsisdn(genMSISDN());
+				sms.setRecipient("PISO Inc.");
+				sms.setSender(names2.get(ctr1));
+				sms.setMessage((String) promoCodes[random]);
+				sms.setShortCode((String) shortCodes[random]);
+				sms.setTimestamp(randTimeStamp);
+				sms.setType("User");	
+				
+				smsList.add(sms);
+			}						
 		}
 		return smsList;
 	}
@@ -139,9 +181,9 @@ public class SmsManager implements ManageSms {
 			for(Promo entry : availablePromos) {
 				if(promoSet.add(entry.getPromoCode()) == true) {
 					promoCodes[ctr] = entry.getPromoCode();
-					shortCodes[ctr] = entry.getShortCode();				
-				}						
-				ctr++;
+					shortCodes[ctr] = entry.getShortCode();
+					ctr++;
+				}										
 			}
 					
 			for(int i = 0; i < promoCodes.length; i++) {
@@ -157,26 +199,26 @@ public class SmsManager implements ManageSms {
 			
 			
 			logger.log(Level.INFO, "\n\nTo complete the promo registration,"
-								 + " please enter your last name and first name."
+								 + " please enter your first name and last name."
 								 + "\nExample: 'Kent Regalado':");
 			name = sc.nextLine();
 			
-//			// SMS data population
-//			Sms sms1 = new Sms();				
-//				
-//			sms1.setMsisdn("8080");
-//			sms1.setRecipient(name);
-//			sms1.setSender("PISO Inc.");
-//			sms1.setMessage("To complete the promo registration, please"
-//						  + "enter your last name and first name."
-//						  + "Example: 'Kent Regalado'");
-//			sms1.setShortCode("placeholder");
-//			sms1.setTimestamp(currentTimeStamp);
-//			sms1.setType("System");	
-//			
-//			smsList.add(sms1);	
+			// System-sent SMS data population
+			Sms sms1 = new Sms();				
+				
+			sms1.setMsisdn("8080");
+			sms1.setRecipient(name);
+			sms1.setSender("PISO Inc.");
+			sms1.setMessage("To complete the promo registration, please"
+						  + " enter your first name and last name."
+						  + " Example: Kent Regalado");
+			sms1.setShortCode("----");
+			sms1.setTimestamp(currentTimeStamp);
+			sms1.setType("System");	
 			
-			// SMS data population
+			smsList.add(sms1);	
+			
+			// User-sent SMS data population
 			Sms sms = new Sms();				
 				
 			sms.setMsisdn(genMSISDN());
@@ -200,56 +242,67 @@ public class SmsManager implements ManageSms {
 		Timestamp before = new Timestamp(0);
 		Timestamp after = new Timestamp(0);
 		int ctr = 0;
+		int chk = 0;
 				
 		for(Sms entry : generatedSmsList) {
-			int chk1 = 0;
-			int chk2 = 0;
-			int chk3 = 0;
-			int chk4 = 0;
-			int chk5 = 0;						
-			
-			Sms sms = new Sms();						
-			
-			// checks if the msisdn is valid			
-			if(entry.getMsisdn() != null && entry.getMsisdn().matches("[0-9]+")
-		       && entry.getMsisdn().length() == 9) 
-				chk1 = 1;
-			
-			// checks if the recipient is valid
-			if(entry.getRecipient() != null && entry.getRecipient().matches("PISO Inc."))
-				chk2 = 1;
-			
-			// checks if the sender has a valid name
-			if(entry.getSender() != null && entry.getSender().matches("[a-zA-z]+[ ][a-zA-Z]+")) 
-				chk3 = 1;
-			
-			// checks if the entered message (promo code) is valid
-			checkerArrList.addAll(promoMngr.retrievePromos(entry.getMessage(), con));
-		 
-			ArrayList<Integer> index1 = new ArrayList<>();
-			ArrayList<Integer> index2 = new ArrayList<>();
-			
-			// checks if the entered message (promo code) is valid
-			for(Promo entry1 : checkerArrList) {
-				if(entry.getMessage() != null && entry.getMessage().matches(entry1.getPromoCode()))
-					index1.add(checkerArrList.indexOf(entry1));				
+			if(entry.getType().matches("User")) {
+				// reset
+				int chk1 = 0;
+				int chk2 = 0;
+				int chk3 = 0;
+				int chk4 = 0;
+				int chk5 = 0;		
+				chk = 0;
 				
-				if(entry.getShortCode() != null && entry.getShortCode().matches(entry1.getShortCode())) 
-					index2.add(checkerArrList.indexOf(entry1));				
-			}
-			
-			if(index1.equals(index2))
-				chk4 = 1;
+				// checks if the msisdn is valid			
+				if(entry.getMsisdn() != null && entry.getMsisdn().matches("[0-9]+")
+			       && entry.getMsisdn().length() == 9) 
+					chk1 = 1;
+				
+				// checks if the recipient is valid
+				if(entry.getRecipient() != null && entry.getRecipient().matches("PISO Inc."))
+					chk2 = 1;
+				
+				// checks if the sender has a valid name
+				if(entry.getSender() != null && entry.getSender().matches("[a-zA-z]+[ ][a-zA-Z]+")) 
+					chk3 = 1;
+				
+				// checks if the entered message (promo code) is valid
+				checkerArrList.addAll(promoMngr.retrievePromos(entry.getMessage(), con));
+			 
+				ArrayList<Integer> index1 = new ArrayList<>();
+				ArrayList<Integer> index2 = new ArrayList<>();
+				
+				// checks if the entered message (promo code) is valid
+				for(Promo entry1 : checkerArrList) {
+					if(entry.getMessage() != null && entry.getMessage().matches(entry1.getPromoCode()))
+						index1.add(checkerArrList.indexOf(entry1));				
 					
-			// checks if timestamp is within promo period						
-			before = checkerArrList.get(ctr).getStartDate();
-			after = checkerArrList.get(ctr).getEndDate();
-			
-			if(entry.getTimestamp() != null && 
-			   entry.getTimestamp().before(after)) {
-				if(entry.getTimestamp().after(before))
-					chk5 = 1;
+					if(entry.getShortCode() != null && entry.getShortCode().matches(entry1.getShortCode())) 
+						index2.add(checkerArrList.indexOf(entry1));				
+				}
+				
+				if(index1.equals(index2))
+					chk4 = 1;
+						
+				// checks if timestamp is within promo period						
+				before = checkerArrList.get(ctr).getStartDate();
+				after = checkerArrList.get(ctr).getEndDate();
+				
+				if(entry.getTimestamp() != null && 
+				   entry.getTimestamp().before(after)) {
+					if(entry.getTimestamp().after(before))
+						chk5 = 1;
+				}
+				
+				if(chk1 == 1 && chk2 == 1 && chk3 == 1 &&
+				   chk4 == 1 && chk5 == 1)
+					chk = 1;
+				
+				ctr++;
 			}
+			
+			Sms sms = new Sms();
 			
 			sms.setMsisdn(entry.getMsisdn());
 			sms.setRecipient(entry.getRecipient());
@@ -259,14 +312,12 @@ public class SmsManager implements ManageSms {
 			sms.setTimestamp(entry.getTimestamp());
 			sms.setType(entry.getType());
 			
-			if(chk1 == 1 && chk2 == 1 && chk3 == 1 &&
-			   chk4 == 1 && chk5 == 1) 				
+			if(chk == 1 || entry.getType().matches("System")) 				
 				sms.setStatus("SUCCESS");										
 			
 			else sms.setStatus("FAIL");
 			
-			processedSmsList.add(sms);
-			ctr++;
+			processedSmsList.add(sms);			
 		}	
 		logger.log(Level.INFO, "\nDONE PROCESSING SMS!\n");
 		
@@ -286,12 +337,12 @@ public class SmsManager implements ManageSms {
 						 + "timeStamp,"
 						 + "type,"
 						 + "status) VALUES "
-						 + "(aes_encrypt(" + entry.getMsisdn() + ", sha2('key', 512)),'"
-						 + entry.getRecipient()
-						 + "',aes_encrypt('" + entry.getSender() + "', sha2('key', 512)),'"
+						 + "(aes_encrypt(" + entry.getMsisdn() + ", sha2('secretPassphrase', 512)),"
+						 + "aes_encrypt('" + entry.getRecipient() + "', sha2('secretPassphrase', 512)),"
+						 + "aes_encrypt('" + entry.getSender() + "', sha2('secretPassphrase', 512)),'"
 						 + entry.getMessage() + "','"
 						 + entry.getShortCode()
-						 + "',aes_encrypt(" + entry.getTransactionId() + ", sha2('key', 512)),'"
+						 + "',aes_encrypt(" + entry.getTransactionId() + ", sha2('secretPassphrase', 512)),'"
 						 + entry.getTimestamp() + "','"
 						 + entry.getType() + "','"
 						 + entry.getStatus() + "')";
@@ -330,12 +381,12 @@ public class SmsManager implements ManageSms {
 	@Override
 	public void acquireSms(Timestamp start, Timestamp end, Connection con) {
 		String selectQuery = "SELECT idSMS,"				
-						   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
-						   + "recipient,"
-						   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+						   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+						   + "cast(aes_decrypt(recipient, sha2('secretPassphrase', 512)) as char(40)) recipient_decrypt,"
+						   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt,"
 						   + "message,"
 						   + "shortCode,"
-						   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+						   + "cast(aes_decrypt(transactionId, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
 						   + "timeStamp,"
 						   + "type,"
 						   + "status \r\n"
@@ -376,12 +427,12 @@ public class SmsManager implements ManageSms {
 		String selectQuery = "";
 		if(stringValue.contains("PISO")) {
 			selectQuery = "SELECT idSMS,"				
-					   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
-					   + "recipient,"
-					   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+					   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+					   + "cast(aes_decrypt(recipient, sha2('secretPassphrase', 512)) as char(40)) recipient_decrypt,"
+					   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt,"
 					   + "message,"
 					   + "shortCode,"
-					   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+					   + "cast(aes_decrypt(transactionId, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
 					   + "timeStamp,"
 					   + "type,"
 					   + "status \r\n"
@@ -390,12 +441,12 @@ public class SmsManager implements ManageSms {
 		}
 		else {
 			selectQuery = "SELECT idSMS,"				
-					   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
-					   + "recipient,"
-					   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+					   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+					   + "cast(aes_decrypt(recipient, sha2('secretPassphrase', 512)) as char(40)) recipient_decrypt,"
+					   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt,"
 					   + "message,"
 					   + "shortCode,"
-					   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+					   + "cast(aes_decrypt(transactionId, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
 					   + "timeStamp,"
 					   + "type,"
 					   + "status \r\n"
@@ -435,16 +486,16 @@ public class SmsManager implements ManageSms {
 	@Override
 	public void acquireSms(Connection con) {
 		String selectQuery = "SELECT idSMS,"				
-						   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
-						   + "recipient,"
-						   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+						   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+						   + "cast(aes_decrypt(recipient, sha2('secretPassphrase', 512)) as char(40)) recipient_decrypt,"
+						   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt,"
 						   + "message,"
 						   + "shortCode,"
-						   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+						   + "cast(aes_decrypt(transactionId, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
 						   + "timeStamp,"
 						   + "type,"
 						   + "status \r\n"
-						   + "FROM sms_db.sms;";		
+						   + "FROM sms_db.sms";	
 
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
@@ -483,12 +534,12 @@ public class SmsManager implements ManageSms {
 	public void acquireSms(Connection con, String... msisdn) {		
 		for(String curr : msisdn) {
 			String selectQuery = "SELECT idSMS,"				
-							   + "cast(aes_decrypt(msisdn, sha2('key', 512)) as char(9)) msisdn_decrypt,"
-							   + "recipient,"
-							   + "cast(aes_decrypt(sender, sha2('key', 512)) as char(60)) sender_decrypt,"
+							   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+							   + "cast(aes_decrypt(recipient, sha2('secretPassphrase', 512)) as char(40)) recipient_decrypt,"
+							   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt,"
 							   + "message,"
 							   + "shortCode,"
-							   + "cast(aes_decrypt(transactionId, sha2('key', 512)) as char(9)) msisdn_decrypt,"
+							   + "cast(aes_decrypt(transactionId, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
 							   + "timeStamp,"
 							   + "type,"
 							   + "status \r\n"

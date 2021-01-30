@@ -223,7 +223,7 @@ public class PromoManager implements ManagePromo {
 		     promos.add(promo);
 		 }
 		} catch (SQLException e) {
-		 logger.log(Level.SEVERE, "SQLException", e);
+			logger.log(Level.SEVERE, "SQLException", e);
 		}
 		logger.log(Level.INFO, "\nResults: {0}\n", result);
 		return promos;

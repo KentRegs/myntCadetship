@@ -17,20 +17,22 @@ public class DatabaseConnect {
     private static Connection con = null;
     
     public static void main(String[] args){	
-    	
-        DatabaseConnect.connect();
-//        promoMngr.insertPromo(con);        
+    	DatabaseConnect.connect();
+        
+        if(promoMngr.retrievePromos(con).isEmpty()) {
+        	promoMngr.insertPromo(con);        	
+        }
         availablePromos.addAll(promoMngr.retrievePromos(con));
         // user sends "PROMO" to the shortcode to see the details of the promo
 //        promoMngr.retrievePromos("PISO CAKE", "5678", con);
         //user sends "REGISTER" to the shortcode to avail the promo
-        generatedSmsList.addAll(smsMngr.genSMS(availablePromos, "Register", "5678"));
-//        generatedSmsList.addAll(smsMngr.genSMS(availablePromos));
+//        generatedSmsList.addAll(smsMngr.genSMS(availablePromos, "Register", "1234"));
+        generatedSmsList.addAll(smsMngr.genSMS(availablePromos, "Register"));
         verifiedSmsList.addAll(smsMngr.smsChecker(generatedSmsList, con));
         smsMngr.insertSms(verifiedSmsList, con);
 //        smsMngr.acquireSms(start, end, con);
 //        smsMngr.acquireSms("403594942", con);
-//        smsMngr.acquireSms(con);
+        smsMngr.acquireSms(con);
 //        smsMngr.acquireSms(con, "", "", "");
         DatabaseConnect.disconnect();
     }
