@@ -73,6 +73,8 @@ public class SmsManager implements ManageSms {
 			String promoCodes[] = new String[size];	
 			ArrayList<String> names1 = new ArrayList<String>();
 			ArrayList<String> names2 = new ArrayList<String>();
+			ArrayList<Timestamp> time1 = new ArrayList<Timestamp>();
+			ArrayList<Timestamp> time2 = new ArrayList<Timestamp>();
 			
 			// populate Sets with unique available promos from the database
 			for(Promo entry : availablePromos) {
@@ -84,6 +86,7 @@ public class SmsManager implements ManageSms {
 			}					
 			
 			Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());
+			Timestamp time = new Timestamp(0);
 			
 			long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
 			long end = Timestamp.valueOf("2021-12-30 23:59:00").getTime();
@@ -93,7 +96,9 @@ public class SmsManager implements ManageSms {
 			for(int ctr1 = 0; ctr1 < 30; ctr1++) {
 				// System-sent SMS data population
                 Sms sms1 = new Sms();				
+				Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
                 names1.add(genName());
+                time1.add(randTimeStamp);
 					
 				sms1.setMsisdn("8080");
 				sms1.setRecipient(names1.get(ctr1));
@@ -102,7 +107,7 @@ public class SmsManager implements ManageSms {
 							  + " enter your first name and last name."
 							  + " Example: Kent Regalado");
 				sms1.setShortCode("----");
-				sms1.setTimestamp(currentTimeStamp);
+				sms1.setTimestamp(time1.get(ctr1));
 				sms1.setType("System");	
 				
 				smsList.add(sms1);	
@@ -110,7 +115,6 @@ public class SmsManager implements ManageSms {
 
 			// PISO PIZZA User-sent SMS data population
 			for(int ctr1 = 0; ctr1 < 30; ctr1++) {
-				Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
 				Sms sms = new Sms();				
 				
 				sms.setMsisdn(genMSISDN());
@@ -118,7 +122,7 @@ public class SmsManager implements ManageSms {
 				sms.setSender(names1.get(ctr1));
 				sms.setMessage("PISO PIZZA");
 				sms.setShortCode("1234");
-				sms.setTimestamp(randTimeStamp);
+				sms.setTimestamp(time1.get(ctr1));
 				sms.setType("User");			
 				
 				smsList.add(sms);
@@ -127,8 +131,10 @@ public class SmsManager implements ManageSms {
             // System responses
 			for(int ctr1 = 0; ctr1 < 30; ctr1++) {
 				// System-sent SMS data population
-                Sms sms1 = new Sms();				
-                names2.add(genName());
+                Sms sms1 = new Sms();
+                Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
+                names2.add(genName());                
+                time2.add(randTimeStamp);
 					
 				sms1.setMsisdn("8080");
 				sms1.setRecipient(names2.get(ctr1));
@@ -137,15 +143,14 @@ public class SmsManager implements ManageSms {
 							  + " enter your first name and last name."
 							  + " Example: Kent Regalado");
 				sms1.setShortCode("----");
-				sms1.setTimestamp(currentTimeStamp);
+				sms1.setTimestamp(time2.get(ctr1));
 				sms1.setType("System");	
 				
 				smsList.add(sms1);	
 			}
 			
 			// SMS data population
-			for(int ctr1 = 0; ctr1 < 30; ctr1++) {
-				Timestamp randTimeStamp = new Timestamp(offset + (long)(Math.random() * diff));
+			for(int ctr1 = 0; ctr1 < 30; ctr1++) {				
 				int end2 = promoCodes.length;
 				int offset2 = 0;			
 				int random = (int) ((Math.random() * (end2 - offset2)) + offset2);				
@@ -157,7 +162,7 @@ public class SmsManager implements ManageSms {
 				sms.setSender(names2.get(ctr1));
 				sms.setMessage((String) promoCodes[random]);
 				sms.setShortCode((String) shortCodes[random]);
-				sms.setTimestamp(randTimeStamp);
+				sms.setTimestamp(time2.get(ctr1));
 				sms.setType("User");	
 				
 				smsList.add(sms);
@@ -514,7 +519,7 @@ public class SmsManager implements ManageSms {
                 		+ "\nshortcode: " + resultSet.getString(6)
                 		+ "\ntransaction id: " + resultSet.getInt(7)
                 		+ "\ntimestamp: " + resultSet.getTimestamp(8)
-                		+ "\ntype:: " + resultSet.getString(9)
+                		+ "\ntype: " + resultSet.getString(9)
                 		+ "\nstatus: " + resultSet.getString(10)+ "\n\n");
             }
 		} catch (SQLException e) {
@@ -522,12 +527,6 @@ public class SmsManager implements ManageSms {
 		}
 		
 		logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);
-	}
-
-	@Override
-	public void sentSms() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -573,6 +572,164 @@ public class SmsManager implements ManageSms {
 			
 			logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);
 		}
+	}
+
+	@Override
+	public void acquireFailSms(Connection con) {
+		String selectQuery = "SELECT idSMS,"				
+				   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+				   + "cast(aes_decrypt(recipient, sha2('secretPassphrase', 512)) as char(40)) recipient_decrypt,"
+				   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt,"
+				   + "message,"
+				   + "shortCode,"
+				   + "cast(aes_decrypt(transactionId, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+				   + "timeStamp,"
+				   + "type,"
+				   + "status \r\n"
+				   + "FROM sms \r\n"
+				   + "where status = 'FAIL'";	
+
+		ResultSet resultSet = null;
+		ArrayList<String> result = new ArrayList<>();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(selectQuery);
+			
+			resultSet = ps.executeQuery();
+		
+			while(resultSet.next()){
+		 	result.add("\nidSMS: " + resultSet.getInt(1) 
+		     		+ "\nmsisdn: " + resultSet.getString(2)
+		     		+ "\nrecipient: " + resultSet.getString(3)
+		     		+ "\nsender: " + resultSet.getString(4)
+		     		+ "\nmessage: " + resultSet.getString(5)
+		     		+ "\nshortcode: " + resultSet.getString(6)
+		     		+ "\ntransaction id: " + resultSet.getInt(7)
+		     		+ "\ntimestamp: " + resultSet.getTimestamp(8)
+		     		+ "\ntype: " + resultSet.getString(9)
+		     		+ "\nstatus: " + resultSet.getString(10)+ "\n\n");
+		 }
+		} catch (SQLException e) {
+		logger.log(Level.SEVERE, "SQLException", e);
+		}
+		
+		logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);
+	}
+
+	@Override
+	public void acquireSuccessSms(Connection con) {
+		String selectQuery = "SELECT idSMS,"				
+				   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+				   + "cast(aes_decrypt(recipient, sha2('secretPassphrase', 512)) as char(40)) recipient_decrypt,"
+				   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt,"
+				   + "message,"
+				   + "shortCode,"
+				   + "cast(aes_decrypt(transactionId, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"
+				   + "timeStamp,"
+				   + "type,"
+				   + "status \r\n"
+				   + "FROM sms \r\n"
+				   + "where status = 'SUCCESS'";	
+
+		ResultSet resultSet = null;
+		ArrayList<String> result = new ArrayList<>();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(selectQuery);
+			
+			resultSet = ps.executeQuery();
+		
+			while(resultSet.next()){
+		 	result.add("\nidSMS: " + resultSet.getInt(1) 
+		     		+ "\nmsisdn: " + resultSet.getString(2)
+		     		+ "\nrecipient: " + resultSet.getString(3)
+		     		+ "\nsender: " + resultSet.getString(4)
+		     		+ "\nmessage: " + resultSet.getString(5)
+		     		+ "\nshortcode: " + resultSet.getString(6)
+		     		+ "\ntransaction id: " + resultSet.getInt(7)
+		     		+ "\ntimestamp: " + resultSet.getTimestamp(8)
+		     		+ "\ntype: " + resultSet.getString(9)
+		     		+ "\nstatus: " + resultSet.getString(10)+ "\n\n");
+		 }
+		} catch (SQLException e) {
+		logger.log(Level.SEVERE, "SQLException", e);
+		}
+		
+		logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);
+	}
+
+	@Override
+	public void acquirePersonsSms(Connection con) {
+		String selectQuery = "SELECT idSMS,"				
+				   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"				   
+				   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt"				   				   
+				   + " FROM sms \r\n"
+				   + "WHERE type = 'User'";	
+
+		ResultSet resultSet = null;
+		ArrayList<String> result = new ArrayList<>();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(selectQuery);
+			
+			resultSet = ps.executeQuery();
+		
+			while(resultSet.next()){
+		 	result.add("\nidSMS: " + resultSet.getInt(1) 
+		     		+ "\nmsisdn: " + resultSet.getString(2)
+		     		+ "\nsender: " + resultSet.getString(3) + "\n\n");
+		 }
+		} catch (SQLException e) {
+		logger.log(Level.SEVERE, "SQLException", e);
+		}
+		
+		logger.log(Level.INFO, "\nRetrieved SMS:\n{0}\n", result);
+	}
+
+	@Override
+	public void acquireUserSms(Connection con) {
+		String selectQuery = "SELECT COUNT(*) from sms "				
+				   		   + "WHERE type = 'User'";	
+
+		ResultSet resultSet = null;
+		ArrayList<String> result = new ArrayList<>();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(selectQuery);
+			
+			resultSet = ps.executeQuery();
+		
+			while(resultSet.next()){
+		 	result.add("total count of User-sent SMS: " + resultSet.getInt(1));
+		 }
+		} catch (SQLException e) {
+		logger.log(Level.SEVERE, "SQLException", e);
+		}
+		
+		logger.log(Level.INFO, "\n{0}\n", result);
+	}
+
+	@Override
+	public void acquireSystemSms(Connection con) {
+		String selectQuery = "SELECT COUNT(*) from sms "				
+				   		   + "WHERE type = 'System'";	
+		
+		ResultSet resultSet = null;
+		ArrayList<String> result = new ArrayList<>();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(selectQuery);
+			
+			resultSet = ps.executeQuery();
+		
+			while(resultSet.next()){
+			result.add("total count of System-sent SMS: " + resultSet.getInt(1));
+		}
+		} catch (SQLException e) {
+		logger.log(Level.SEVERE, "SQLException", e);
+		}
+		
+		logger.log(Level.INFO, "\n{0}\n", result);
 	}
 	
 }

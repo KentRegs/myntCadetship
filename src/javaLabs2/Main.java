@@ -1,11 +1,9 @@
 package javaLabs2;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.sql.Timestamp;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,44 +17,31 @@ public class Main {
 	static Map<Integer, String> smsMap = new HashMap<Integer, String>();		
 	static Scanner sc = new Scanner(System.in);	
 	static String promoCodes[] = {"PISO PIZZA", "PISO CAKE", "PISO PASTA", 
-						   "PISO FRIES", "PISO ICECREAM"};	
+						   		  "PISO FRIES", "PISO ICECREAM"};	
 	static String details[] = {"Get a 12 inch pizza for only 1 peso!", 
-					    "Get a vanilla dream cake for only 1 peso!", 
-					    "Get a bowl of oriecchiette for only 1 peso!", 
-					    "Get a bucket of fries for only 1 peso!", 
-					    "Get a tub of vanilla ice cream for only 1 peso!"};
+							   "Get a vanilla dream cake for only 1 peso!", 
+							   "Get a bowl of oriecchiette for only 1 peso!", 
+							   "Get a bucket of fries for only 1 peso!", 
+							   "Get a tub of vanilla ice cream for only 1 peso!"};
 	static String shortCodes[] = {"1234", "5678", "4321", "8765", "9009"};
 	
 	public static void main(String[] args){
-		String msisdn;
-		String promoCode;
-		String shortCode;
+		String promoCode = "PISO PIZZA";
+		String msisdn = "123456789";		
+		String shortCode = "1234";
 		String checker;
 		
 		Map<Integer, String> smsChkMap = new HashMap<Integer, String>();	
 		
-//		createPromo();
-//		showPromos();
-		
-		logger.log(Level.INFO, "Please enter your 9-digit mobile number: ");
-		msisdn = sc.nextLine();
-		logger.log(Level.INFO, "Please select a promo code: ");
-		promoCode = sc.nextLine();
-		logger.log(Level.INFO, "Please enter the selected "
-						     + "promo code's 4-digit shortcode: ");
-		shortCode = sc.nextLine();
-		
-		smsChkMap.put(1, "123456789");    
-		smsChkMap.put(2, "PISO PIZZA");
-		smsChkMap.put(3, "1234");			
+		smsChkMap.put(1, msisdn);    
+		smsChkMap.put(2, promoCode);
+		smsChkMap.put(3, shortCode);			
 		
 		// check sms
 		checker = smsChecker(genSMS(msisdn, promoCode, shortCode));
 		
-		if(checker == "SUCCESS") {
-			DatabaseConnect.connect();			
-//			DatabaseConnect.insertPromo("PROMO");
-		}			
+		if(checker == "SUCCESS") 
+			logger.log(Level.INFO, "\n\nVALID SMS");		
 		else logger.log(Level.INFO, "\n\nINVALID SMS");
 	}
 	
@@ -71,8 +56,6 @@ public class Main {
 	
 	// function for checking an SMS
 	public static String smsChecker(Map<Integer, String> smsChkMap) {
-//		genSMS();
-		
 		int i = 0;
 		int j = 0;
 		int chk1 = 0;
