@@ -85,8 +85,7 @@ public class SmsManager implements ManageSms {
 				}										
 			}					
 			
-			Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());
-			Timestamp time = new Timestamp(0);
+//			Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());			
 			
 			long offset = Timestamp.valueOf("2021-02-02 00:00:00").getTime();
 			long end = Timestamp.valueOf("2021-12-30 23:59:00").getTime();
@@ -136,13 +135,13 @@ public class SmsManager implements ManageSms {
                 names2.add(genName());                
                 time2.add(randTimeStamp);
 					
-				sms1.setMsisdn("8080");
+				sms1.setMsisdn("9090");
 				sms1.setRecipient(names2.get(ctr1));
 				sms1.setSender("PISO Inc.");
 				sms1.setMessage("To complete the promo registration, please"
 							  + " enter your first name and last name."
 							  + " Example: Kent Regalado");
-				sms1.setShortCode("----");
+				sms1.setShortCode("--");
 				sms1.setTimestamp(time2.get(ctr1));
 				sms1.setType("System");	
 				
@@ -152,7 +151,7 @@ public class SmsManager implements ManageSms {
 			// SMS data population
 			for(int ctr1 = 0; ctr1 < 30; ctr1++) {				
 				int end2 = promoCodes.length;
-				int offset2 = 0;			
+				int offset2 = 1;			
 				int random = (int) ((Math.random() * (end2 - offset2)) + offset2);				
 				
 				Sms sms = new Sms();				
@@ -352,14 +351,13 @@ public class SmsManager implements ManageSms {
 						 + entry.getType() + "','"
 						 + entry.getStatus() + "')";
 			
-			Statement statement = null;
-	        int result = 0;
+			Statement statement = null;	        
 			
 	//				PreparedStatement ps = con.prepareStatement(query);
 	//				ps.execute();	
 			try {
 	            statement = con.createStatement();
-	            result = statement.executeUpdate(query);
+	            statement.executeUpdate(query);
 	            logger.log(Level.INFO, "\nDONE INSERTING SMS!\n");
 			} catch (SQLException e) {
 				logger.log(Level.SEVERE, "SQLException", e);
@@ -587,7 +585,7 @@ public class SmsManager implements ManageSms {
 				   + "type,"
 				   + "status \r\n"
 				   + "FROM sms \r\n"
-				   + "where status = 'FAIL'";	
+				   + "where status = 'FAIL' and message = 'PISO PIZZA'";	
 
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
@@ -629,7 +627,7 @@ public class SmsManager implements ManageSms {
 				   + "type,"
 				   + "status \r\n"
 				   + "FROM sms \r\n"
-				   + "where status = 'SUCCESS'";	
+				   + "where status = 'SUCCESS' and message = 'PISO PIZZA'";	
 
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
@@ -664,7 +662,7 @@ public class SmsManager implements ManageSms {
 				   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(9)) msisdn_decrypt,"				   
 				   + "cast(aes_decrypt(sender, sha2('secretPassphrase', 512)) as char(60)) sender_decrypt"				   				   
 				   + " FROM sms \r\n"
-				   + "WHERE type = 'User'";	
+				   + "WHERE type = 'User' and message = 'PISO PIZZA' group by sender";	
 
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
@@ -689,7 +687,8 @@ public class SmsManager implements ManageSms {
 	@Override
 	public void acquireUserSms(Connection con) {
 		String selectQuery = "SELECT COUNT(*) from sms "				
-				   		   + "WHERE type = 'User'";	
+				   		   + "WHERE type = 'User' and "
+				   		   + "cast(aes_decrypt(msisdn, sha2('secretPassphrase', 512)) as char(40)) recipient_decrypt = ";	
 
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
@@ -712,7 +711,7 @@ public class SmsManager implements ManageSms {
 	@Override
 	public void acquireSystemSms(Connection con) {
 		String selectQuery = "SELECT COUNT(*) from sms "				
-				   		   + "WHERE type = 'System'";	
+				   		   + "WHERE shortCode = '----'";	
 		
 		ResultSet resultSet = null;
 		ArrayList<String> result = new ArrayList<>();
